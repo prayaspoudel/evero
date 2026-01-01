@@ -2,9 +2,9 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/prayaspoudel/modules/healthcare/delivery/http/middleware"
 	"github.com/prayaspoudel/modules/healthcare/features/user"
 	"github.com/prayaspoudel/modules/healthcare/model"
+	"github.com/prayaspoudel/modules/user/middleware"
 	"github.com/sirupsen/logrus"
 )
 

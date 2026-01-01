@@ -1,0 +1,1540 @@
+{
+	"info": {
+		"_postman_id": "evero-healthcare-api",
+		"name": "Evero Healthcare API",
+		"description": "Complete API collection for Evero Healthcare module with all endpoints and edge cases",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Seeded Data Tests",
+			"item": [
+				{
+					"name": "Login as john.doe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"john.doe\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_login"
+							]
+						},
+						"description": "Login with seeded user john.doe"
+					},
+					"response": []
+				},
+				{
+					"name": "Login as jane.smith",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"jane.smith\",\n  \"password\": \"SecurePass456!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_login"
+							]
+						},
+						"description": "Login with seeded user jane.smith"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Seeded Contact - Alice Johnson",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/550e8400-e29b-41d4-a716-446655440001",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"550e8400-e29b-41d4-a716-446655440001"
+							]
+						},
+						"description": "Get Alice Johnson (seeded contact for john.doe)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Seeded Contact - Bob Williams",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/550e8400-e29b-41d4-a716-446655440002",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"550e8400-e29b-41d4-a716-446655440002"
+							]
+						},
+						"description": "Get Bob Williams (seeded contact for john.doe)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Seeded Contact - Charlie Brown",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/550e8400-e29b-41d4-a716-446655440003",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"550e8400-e29b-41d4-a716-446655440003"
+							]
+						},
+						"description": "Get Charlie Brown (seeded contact for john.doe)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Addresses for Alice Johnson",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/550e8400-e29b-41d4-a716-446655440001/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"550e8400-e29b-41d4-a716-446655440001",
+								"addresses"
+							]
+						},
+						"description": "List all addresses for Alice Johnson (should return 2 addresses)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Seeded Address - Alice's NY Address",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/550e8400-e29b-41d4-a716-446655440001/addresses/660e8400-e29b-41d4-a716-446655440001",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"550e8400-e29b-41d4-a716-446655440001",
+								"addresses",
+								"660e8400-e29b-41d4-a716-446655440001"
+							]
+						},
+						"description": "Get Alice's NY address (123 Main Street, New York)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Seeded Contact - Alice Johnson",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"Alice Updated\",\n  \"last_name\": \"Johnson Updated\",\n  \"email\": \"alice.updated@example.com\",\n  \"phone\": \"+1-555-9999\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/550e8400-e29b-41d4-a716-446655440001",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"550e8400-e29b-41d4-a716-446655440001"
+							]
+						},
+						"description": "Update Alice Johnson's information"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Register User - Success",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"test.user\",\n  \"password\": \"TestPass123!\",\n  \"name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Register a new user successfully"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Duplicate ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"john.doe\",\n  \"password\": \"password123\",\n  \"name\": \"John Doe Duplicate\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Try to register with duplicate user ID (john.doe already exists in seed data)"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Missing Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"incomplete.user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Register with missing required fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Register User - Invalid Data (Max Length)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"this.is.a.very.long.user.id.that.exceeds.the.maximum.allowed.length.of.one.hundred.characters.and.should.fail.validation\",\n  \"password\": \"password123\",\n  \"name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Register with field exceeding max length"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"john.doe\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_login"
+							]
+						},
+						"description": "Login with valid credentials and save token"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Invalid Credentials",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"john.doe\",\n  \"password\": \"WrongPassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_login"
+							]
+						},
+						"description": "Login with incorrect password"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Non-existent User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"nonexistent.user\",\n  \"password\": \"SomePassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_login"
+							]
+						},
+						"description": "Login with non-existent user ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/_current",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_current"
+							]
+						},
+						"description": "Get current logged-in user details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User - No Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/_current",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_current"
+							]
+						},
+						"description": "Try to get current user without authentication"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User - Invalid Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "invalid-token-123"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/_current",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_current"
+							]
+						},
+						"description": "Try to get current user with invalid token"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current User - Success",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe Updated\",\n  \"password\": \"NewSecurePass456!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_current",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_current"
+							]
+						},
+						"description": "Update current user's information"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current User - Partial Update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe - Name Only Update\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/_current",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"_current"
+							]
+						},
+						"description": "Update only name, keeping password unchanged"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout - Success",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Logout current user"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contact Management",
+			"item": [
+				{
+					"name": "Create Contact - Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"contact_id\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"phone\": \"+1-555-0123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							]
+						},
+						"description": "Create a new contact successfully"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contact - Missing Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"last_name\": \"Smith\",\n  \"email\": \"incomplete@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							]
+						},
+						"description": "Create contact without first_name (required field)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contact - Invalid Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"Invalid\",\n  \"last_name\": \"Email\",\n  \"email\": \"not-an-email\",\n  \"phone\": \"123-456-7890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							]
+						},
+						"description": "Create contact with invalid email format"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contact - Max Length Exceeded",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"ThisIsAVeryLongFirstNameThatExceedsTheMaximumAllowedLengthOfOneHundredCharactersAndShouldFailValidation\",\n  \"last_name\": \"Test\",\n  \"email\": \"test@example.com\",\n  \"phone\": \"555-0123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							]
+						},
+						"description": "Create contact with first_name exceeding max length"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Contact - Unauthorized",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"Unauthorized\",\n  \"last_name\": \"User\",\n  \"email\": \"unauth@example.com\",\n  \"phone\": \"555-0000\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							]
+						},
+						"description": "Try to create contact without authentication"
+					},
+					"response": []
+				},
+				{
+					"name": "List Contacts - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							]
+						},
+						"description": "List all contacts for the current user"
+					},
+					"response": []
+				},
+				{
+					"name": "List Contacts - With Pagination",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts?page=1&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						},
+						"description": "List contacts with pagination parameters"
+					},
+					"response": []
+				},
+				{
+					"name": "List Contacts - With Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts?name=Jane&email=jane",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Jane"
+								},
+								{
+									"key": "email",
+									"value": "jane"
+								}
+							]
+						},
+						"description": "Search contacts by name and email"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}"
+							]
+						},
+						"description": "Get a specific contact by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact - Not Found",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Try to get non-existent contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact - Invalid UUID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/invalid-uuid",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"invalid-uuid"
+							]
+						},
+						"description": "Try to get contact with invalid UUID format"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Contact - Success",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"Jane Updated\",\n  \"last_name\": \"Smith Updated\",\n  \"email\": \"jane.updated@example.com\",\n  \"phone\": \"+1-555-9999\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}"
+							]
+						},
+						"description": "Update an existing contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Contact - Not Found",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"Non\",\n  \"last_name\": \"Existent\",\n  \"email\": \"non@example.com\",\n  \"phone\": \"000-0000\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Try to update non-existent contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Contact - Success",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}"
+							]
+						},
+						"description": "Delete a contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Contact - Not Found",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Try to delete non-existent contact"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Address Management",
+			"item": [
+				{
+					"name": "Create Address - Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.environment.set(\"address_id\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"province\": \"NY\",\n  \"postal_code\": \"10001\",\n  \"country\": \"USA\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses"
+							]
+						},
+						"description": "Create a new address for a contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Address - Max Length Exceeded",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"This is an extremely long street address that exceeds the maximum allowed length of 255 characters and should fail validation because it is simply too long to be stored in the database field which has a specific character limit that we are intentionally exceeding here for testing purposes to ensure proper validation\",\n  \"city\": \"Test City\",\n  \"province\": \"TS\",\n  \"postal_code\": \"12345\",\n  \"country\": \"Test Country\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses"
+							]
+						},
+						"description": "Create address with street exceeding max length"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Address - Invalid Contact ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"456 Oak Avenue\",\n  \"city\": \"Boston\",\n  \"province\": \"MA\",\n  \"postal_code\": \"02101\",\n  \"country\": \"USA\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/00000000-0000-0000-0000-000000000000/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"00000000-0000-0000-0000-000000000000",
+								"addresses"
+							]
+						},
+						"description": "Create address for non-existent contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Address - Minimal Data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"\",\n  \"city\": \"\",\n  \"province\": \"\",\n  \"postal_code\": \"\",\n  \"country\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses"
+							]
+						},
+						"description": "Create address with all optional fields empty"
+					},
+					"response": []
+				},
+				{
+					"name": "List Addresses - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses"
+							]
+						},
+						"description": "List all addresses for a contact"
+					},
+					"response": []
+				},
+				{
+					"name": "List Addresses - Contact Not Found",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/00000000-0000-0000-0000-000000000000/addresses",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"00000000-0000-0000-0000-000000000000",
+								"addresses"
+							]
+						},
+						"description": "List addresses for non-existent contact"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Address - Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/{{address_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"{{address_id}}"
+							]
+						},
+						"description": "Get a specific address by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Address - Not Found",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Try to get non-existent address"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address - Success",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"123 Main Street - Updated\",\n  \"city\": \"New York\",\n  \"province\": \"NY\",\n  \"postal_code\": \"10002\",\n  \"country\": \"USA\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/{{address_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"{{address_id}}"
+							]
+						},
+						"description": "Update an existing address"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address - Partial Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"123 Main Street - Partial\",\n  \"city\": \"New York\",\n  \"province\": \"\",\n  \"postal_code\": \"\",\n  \"country\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/{{address_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"{{address_id}}"
+							]
+						},
+						"description": "Update address with partial data"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address - Not Found",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"street\": \"Non Existent\",\n  \"city\": \"Nowhere\",\n  \"province\": \"XX\",\n  \"postal_code\": \"00000\",\n  \"country\": \"None\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Try to update non-existent address"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Address - Success",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/{{address_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"{{address_id}}"
+							]
+						},
+						"description": "Delete an address"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Address - Not Found",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contact_id}}/addresses/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"contacts",
+								"{{contact_id}}",
+								"addresses",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Try to delete non-existent address"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "contact_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "address_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
