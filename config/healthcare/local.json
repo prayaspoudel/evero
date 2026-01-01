@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "golang-clean-architecture"
+    "name": "evero-healthcare"
   },
   "web": {
     "prefork": false,
@@ -10,11 +10,11 @@
     "level": 6
   },
   "database": {
-    "username": "root",
-    "password": "",
+    "username": "postgres",
+    "password": "password",
     "host": "localhost",
-    "port": 3306,
-    "name": "golang_clean_architecture",
+    "port": 5432,
+    "name": "healthcare",
     "pool": {
       "idle": 10,
       "max": 100,

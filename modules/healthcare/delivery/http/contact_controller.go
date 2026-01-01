@@ -5,17 +5,17 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http/middleware"
+	"github.com/prayaspoudel/modules/healthcare/features/address"
 	"github.com/prayaspoudel/modules/healthcare/model"
-	"github.com/prayaspoudel/modules/healthcare/usecase"
 	"github.com/sirupsen/logrus"
 )
 
 type ContactController struct {
-	UseCase *usecase.ContactUseCase
+	UseCase *address.ContactUseCase
 	Log     *logrus.Logger
 }
 
-func NewContactController(useCase *usecase.ContactUseCase, log *logrus.Logger) *ContactController {
+func NewContactController(useCase *address.ContactUseCase, log *logrus.Logger) *ContactController {
 	return &ContactController{
 		UseCase: useCase,
 		Log:     log,

@@ -7,9 +7,10 @@ import (
 	"github.com/prayaspoudel/modules/healthcare/delivery/http"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http/middleware"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http/route"
+	"github.com/prayaspoudel/modules/healthcare/features/address"
+	"github.com/prayaspoudel/modules/healthcare/features/user"
 	"github.com/prayaspoudel/modules/healthcare/gateway/messaging"
 	"github.com/prayaspoudel/modules/healthcare/repository"
-	"github.com/prayaspoudel/modules/healthcare/usecase"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -42,9 +43,9 @@ func Bootstrap(config *BootstrapConfig) {
 	}
 
 	// setup use cases
-	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository, userProducer)
-	contactUseCase := usecase.NewContactUseCase(config.DB, config.Log, config.Validate, contactRepository, contactProducer)
-	addressUseCase := usecase.NewAddressUseCase(config.DB, config.Log, config.Validate, contactRepository, addressRepository, addressProducer)
+	userUseCase := user.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository, userProducer)
+	contactUseCase := address.NewContactUseCase(config.DB, config.Log, config.Validate, contactRepository, contactProducer)
+	addressUseCase := address.NewAddressUseCase(config.DB, config.Log, config.Validate, contactRepository, addressRepository, addressProducer)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)

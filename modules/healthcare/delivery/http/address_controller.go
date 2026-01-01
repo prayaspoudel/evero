@@ -3,17 +3,17 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http/middleware"
+	"github.com/prayaspoudel/modules/healthcare/features/address"
 	"github.com/prayaspoudel/modules/healthcare/model"
-	"github.com/prayaspoudel/modules/healthcare/usecase"
 	"github.com/sirupsen/logrus"
 )
 
 type AddressController struct {
-	UseCase *usecase.AddressUseCase
+	UseCase *address.AddressUseCase
 	Log     *logrus.Logger
 }
 
-func NewAddressController(useCase *usecase.AddressUseCase, log *logrus.Logger) *AddressController {
+func NewAddressController(useCase *address.AddressUseCase, log *logrus.Logger) *AddressController {
 	return &AddressController{
 		Log:     log,
 		UseCase: useCase,

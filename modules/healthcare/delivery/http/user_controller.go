@@ -3,17 +3,17 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http/middleware"
+	"github.com/prayaspoudel/modules/healthcare/features/user"
 	"github.com/prayaspoudel/modules/healthcare/model"
-	"github.com/prayaspoudel/modules/healthcare/usecase"
 	"github.com/sirupsen/logrus"
 )
 
 type UserController struct {
 	Log     *logrus.Logger
-	UseCase *usecase.UserUseCase
+	UseCase *user.UserUseCase
 }
 
-func NewUserController(useCase *usecase.UserUseCase, logger *logrus.Logger) *UserController {
+func NewUserController(useCase *user.UserUseCase, logger *logrus.Logger) *UserController {
 	return &UserController{
 		Log:     logger,
 		UseCase: useCase,

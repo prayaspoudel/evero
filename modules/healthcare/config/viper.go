@@ -11,10 +11,11 @@ import (
 func NewViper() *viper.Viper {
 	config := viper.New()
 
-	config.SetConfigName("config")
+	config.SetConfigName("local")
 	config.SetConfigType("json")
-	config.AddConfigPath("./../")
-	config.AddConfigPath("./")
+	config.AddConfigPath("./../../config/healthcare/")
+	config.AddConfigPath("./../config/healthcare/")
+	config.AddConfigPath("./config/healthcare/")
 	err := config.ReadInConfig()
 
 	if err != nil {

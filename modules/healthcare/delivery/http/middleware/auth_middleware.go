@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/prayaspoudel/modules/healthcare/features/user"
 	"github.com/prayaspoudel/modules/healthcare/model"
-	"github.com/prayaspoudel/modules/healthcare/usecase"
 )
 
-func NewAuth(userUserCase *usecase.UserUseCase) fiber.Handler {
+func NewAuth(userUserCase *user.UserUseCase) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		request := &model.VerifyUserRequest{Token: ctx.Get("Authorization", "NOT_FOUND")}
 		userUserCase.Log.Debugf("Authorization : %s", request.Token)
