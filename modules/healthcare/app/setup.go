@@ -1,20 +1,22 @@
-package setup
+package healthcare
 
 import (
 	"fmt"
 
-	"github.com/prayaspoudel/modules/healthcare/config"
+	infraSetup "github.com/prayaspoudel/infrastructure/setup"
 )
 
 func Setup() {
-	viperConfig := config.NewViper()
-	log := config.NewLogger(viperConfig)
-	db := config.NewDatabase(viperConfig, log)
-	validate := config.NewValidator(viperConfig)
-	app := config.NewFiber(viperConfig)
-	producer := config.NewKafkaProducer(viperConfig, log)
+	// Initialize infrastructure components using centralized setup
+	viperConfig := infraSetup.NewViper("config/healthcare", "local")
+	log := infraSetup.NewLogger(viperConfig)
+	db := infraSetup.NewDatabase(viperConfig, log)
+	validate := infraSetup.NewValidator(viperConfig)
+	app := infraSetup.NewFiber(viperConfig)
+	producer := infraSetup.NewKafkaProducer(viperConfig, log)
 
-	config.Bootstrap(&config.BootstrapConfig{
+	// Bootstrap healthcare module
+	Bootstrap(&BootstrapConfig{
 		DB:       db,
 		App:      app,
 		Log:      log,

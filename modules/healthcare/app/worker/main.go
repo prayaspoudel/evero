@@ -7,15 +7,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/prayaspoudel/modules/healthcare/config"
+	infraSetup "github.com/prayaspoudel/infrastructure/setup"
 	"github.com/prayaspoudel/modules/healthcare/delivery/messaging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func main() {
-	viperConfig := config.NewViper()
-	logger := config.NewLogger(viperConfig)
+	viperConfig := infraSetup.NewViper("config/healthcare", "local")
+	logger := infraSetup.NewLogger(viperConfig)
 	logger.Info("Starting worker service")
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -42,21 +42,21 @@ func main() {
 
 func RunAddressConsumer(logger *logrus.Logger, viperConfig *viper.Viper, ctx context.Context) {
 	logger.Info("setup address consumer")
-	addressConsumerGroup := config.NewKafkaConsumerGroup(viperConfig, logger)
+	addressConsumerGroup := infraSetup.NewKafkaConsumerGroup(viperConfig, logger)
 	addressHandler := messaging.NewAddressConsumer(logger)
 	messaging.ConsumeTopic(ctx, addressConsumerGroup, "addresses", logger, addressHandler.Consume)
 }
 
 func RunContactConsumer(logger *logrus.Logger, viperConfig *viper.Viper, ctx context.Context) {
 	logger.Info("setup contact consumer")
-	contactConsumerGroup := config.NewKafkaConsumerGroup(viperConfig, logger)
+	contactConsumerGroup := infraSetup.NewKafkaConsumerGroup(viperConfig, logger)
 	contactHandler := messaging.NewContactConsumer(logger)
 	messaging.ConsumeTopic(ctx, contactConsumerGroup, "contacts", logger, contactHandler.Consume)
 }
 
 func RunUserConsumer(logger *logrus.Logger, viperConfig *viper.Viper, ctx context.Context) {
 	logger.Info("setup user consumer")
-	userConsumerGroup := config.NewKafkaConsumerGroup(viperConfig, logger)
+	userConsumerGroup := infraSetup.NewKafkaConsumerGroup(viperConfig, logger)
 	userHandler := messaging.NewUserConsumer(logger)
 	messaging.ConsumeTopic(ctx, userConsumerGroup, "users", logger, userHandler.Consume)
 }

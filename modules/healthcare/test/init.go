@@ -3,7 +3,8 @@ package test
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/prayaspoudel/modules/healthcare/config"
+	infraSetup "github.com/prayaspoudel/infrastructure/setup"
+	healthcare "github.com/prayaspoudel/modules/healthcare/app"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -20,14 +21,14 @@ var log *logrus.Logger
 var validate *validator.Validate
 
 func init() {
-	viperConfig = config.NewViper()
-	log = config.NewLogger(viperConfig)
-	validate = config.NewValidator(viperConfig)
-	app = config.NewFiber(viperConfig)
-	db = config.NewDatabase(viperConfig, log)
-	producer := config.NewKafkaProducer(viperConfig, log)
+	viperConfig = infraSetup.NewViper("config/healthcare", "local")
+	log = infraSetup.NewLogger(viperConfig)
+	validate = infraSetup.NewValidator(viperConfig)
+	app = infraSetup.NewFiber(viperConfig)
+	db = infraSetup.NewDatabase(viperConfig, log)
+	producer := infraSetup.NewKafkaProducer(viperConfig, log)
 
-	config.Bootstrap(&config.BootstrapConfig{
+	healthcare.Bootstrap(&healthcare.BootstrapConfig{
 		DB:       db,
 		App:      app,
 		Log:      log,
