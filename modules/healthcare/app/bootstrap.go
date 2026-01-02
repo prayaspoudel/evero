@@ -9,7 +9,7 @@ import (
 	"github.com/prayaspoudel/modules/healthcare/delivery/messaging"
 	"github.com/prayaspoudel/modules/healthcare/features/address"
 	"github.com/prayaspoudel/modules/healthcare/features/user"
-	healthcareMiddleware "github.com/prayaspoudel/modules/healthcare/middleware"
+	"github.com/prayaspoudel/modules/healthcare/middleware"
 	"github.com/prayaspoudel/modules/healthcare/repository"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -53,7 +53,7 @@ func Bootstrap(config *BootstrapConfig) {
 	addressController := http.NewAddressController(addressUseCase, config.Log)
 
 	// setup middleware
-	authMiddleware := healthcareMiddleware.NewAuth(userUseCase)
+	authMiddleware := middleware.NewAuth(userUseCase)
 
 	routeConfig := route.RouteConfig{
 		App:               config.App,
