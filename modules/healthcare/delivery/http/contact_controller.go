@@ -4,9 +4,9 @@ import (
 	"math"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/prayaspoudel/modules/access/middleware"
 	"github.com/prayaspoudel/modules/healthcare/features/address"
 	"github.com/prayaspoudel/modules/healthcare/model"
-	"github.com/prayaspoudel/modules/user/middleware"
 	"github.com/sirupsen/logrus"
 )
 
