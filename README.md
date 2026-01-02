@@ -1,16 +1,17 @@
-# Evero
+# Evero Platform
 
-Evero is a multi-domain, modular Go backend platform designed for building enterprise-grade applications across healthcare, insurance, and banking sectors. Built with clean architecture principles, it provides a robust foundation for domain-specific services with shared infrastructure components.
+Enterprise-grade modular platform for building scalable applications across healthcare, insurance, finance, and banking sectors. Built with clean architecture principles and Go, Evero provides a robust foundation for domain-specific services with shared infrastructure components.
 
 ## 🏗️ Architecture
 
 Evero follows a **modular monolith architecture** with clear separation of concerns:
 
-- **Multi-Domain Support**: Healthcare, Insurance, and Banking modules
-- **Clean Architecture**: Domain-driven design with layers (Entity, Use Case, Repository, Delivery)
+- **Multi-Domain Support**: Access (SSO), Healthcare, Insurance, Finance, and Banking modules
+- **Clean Architecture**: Domain-driven design with layers (Entity, Use Case, Repository, Controller)
 - **Shared Infrastructure**: Reusable components across all modules
 - **Event-Driven**: Kafka integration for asynchronous messaging
 - **API-First**: RESTful APIs with comprehensive validation
+- **Modular Deployment**: Each module can be deployed independently
 
 ## 🚀 Features
 
@@ -21,103 +22,201 @@ Evero follows a **modular monolith architecture** with clear separation of conce
 - **Message Broker**: Kafka and RabbitMQ support
 - **Logging**: Structured logging with Logrus and Zap
 - **Validation**: Request validation with go-playground/validator
-- **Routing**: Multiple router support (Fiber, Gorilla Mux, Gin)
+- **Routing**: Fiber v2 (primary framework)
 
-### Healthcare Module
+### Access Module (Authentication & Authorization)
 
-The healthcare module provides comprehensive patient and contact management capabilities:
-
-#### Features
-- **User Management**
-  - User registration and authentication
-  - JWT-based authentication
-  - Session management
-  - User profile updates
-
-- **Contact Management**
-  - Create, read, update, and delete contacts
-  - Contact search and pagination
-  - Email and phone validation
-  - User-specific contact isolation
-
-- **Address Management**
-  - Multiple addresses per contact
-  - Full CRUD operations
-  - Address validation
-  - Hierarchical data structure (User → Contact → Address)
-
-### Access Module (SSO)
-
-The access module provides comprehensive authentication and authorization services:
+Enterprise-grade single sign-on and access control system.
 
 #### Features
 - **Authentication**
   - User registration and login
   - JWT-based access and refresh tokens
-  - Automatic token rotation
-  - Session management
+  - Token rotation and refresh
+  - Session management with device tracking
+  - Email verification workflow
 
 - **Authorization**
   - Multi-company/tenant support
-  - OAuth2 authorization flows
-  - Two-factor authentication (TOTP, SMS)
-  - Role-based access control
+  - OAuth 2.0 authorization code flow
+  - Two-factor authentication (TOTP)
+  - Role-based access control (RBAC)
+  - Fine-grained permissions
 
 - **Security**
   - Password reset and verification
-  - Email verification
-  - Audit logging
   - Account lockout protection
+  - Audit logging
+  - bcrypt password hashing
+  - Secure token management
 
-**📖 Documentation**: See [docs/ACCESS_README.md](docs/ACCESS_README.md)
+**📖 Documentation**: [docs/access/IMPLEMENTATION_SUMMARY.md](docs/access/IMPLEMENTATION_SUMMARY.md)  
+**Migration Guide**: [docs/SSO_MIGRATION_SUMMARY.md](docs/SSO_MIGRATION_SUMMARY.md)  
+**Quick Start**: [docs/access/QUICK_REFERENCE.md](docs/access/QUICK_REFERENCE.md)
 
-**Quick Start**:
+**Build & Deploy**:
 ```bash
-# Build and run the access module
-go build -o bin/access app/access/main.go
-./bin/access
+make build-access    # Build the module
+make deploy-access   # Deploy the module
 ```
 
-**API**: http://localhost:8080 (configurable)
+**API**: http://localhost:3000 (configurable)
 
-#### API Endpoints
+### Healthcare Module
 
-**User Management**
-```
-POST   /api/register       - Register new user
-POST   /api/login          - User login
-GET    /api/users/current  - Get current user
-PATCH  /api/users/current  - Update current user
-POST   /api/logout         - User logout
+Comprehensive healthcare management system for patient care, appointments, and medical records.
+
+#### Features
+- **Patient Management**
+  - Patient registration and demographics
+  - Medical history tracking
+  - Insurance information
+  - Emergency contacts
+
+- **Appointments & Scheduling**
+  - Appointment booking
+  - Provider availability
+  - Appointment reminders
+  - Waitlist management
+
+- **Electronic Medical Records (EMR)**
+  - Clinical notes
+  - Diagnosis recording (ICD-10)
+  - Prescription management
+  - Lab results integration
+
+- **Billing Integration**
+  - Insurance claim generation
+  - Payment processing
+  - Finance module integration
+
+**📖 Documentation**: [docs/healthcare/README.md](docs/healthcare/README.md)
+
+**Build & Deploy**:
+```bash
+make build-healthcare    # Build the module
+make deploy-healthcare   # Deploy the module
 ```
 
-**Contact Management**
-```
-POST   /api/contacts               - Create contact
-GET    /api/contacts               - List contacts (with pagination)
-GET    /api/contacts/:id           - Get contact by ID
-PATCH  /api/contacts/:id           - Update contact
-DELETE /api/contacts/:id           - Delete contact
+**API**: http://localhost:3001 (configurable)
+
+### Insurance Module
+
+Complete insurance management platform for policies, claims, and underwriting.
+
+#### Features
+- **Policy Management**
+  - Policy creation and issuance
+  - Premium calculation
+  - Renewals and endorsements
+  - Coverage management
+
+- **Claims Processing**
+  - Claim submission and intake
+  - Assessment and adjudication
+  - Payment processing
+  - Fraud detection
+
+- **Underwriting**
+  - Risk assessment
+  - Quote generation
+  - Automated underwriting rules
+  - Manual workflow support
+
+- **Agent & Commission Management**
+  - Agent registration
+  - Commission calculation
+  - Performance analytics
+
+**📖 Documentation**: [docs/insurance/README.md](docs/insurance/README.md)
+
+**Build & Deploy**:
+```bash
+make build-insurance    # Build the module
+make deploy-insurance   # Deploy the module
 ```
 
-**Address Management**
+**API**: http://localhost:3002 (configurable)
+
+### Finance Module
+
+Comprehensive financial management system with general ledger, AR/AP, and budgeting.
+
+#### Features
+- **General Ledger**
+  - Chart of accounts
+  - Double-entry bookkeeping
+  - Journal entries
+  - Period closing
+  - Multi-currency support
+
+- **Accounts Receivable/Payable**
+  - Customer invoicing
+  - Payment tracking
+  - Aging reports
+  - Vendor management
+
+- **Budgeting & Forecasting**
+  - Budget creation
+  - Variance analysis
+  - Cash flow forecasting
+
+- **Financial Reporting**
+  - Balance sheet
+  - Income statement
+  - Cash flow statement
+  - Custom reports
+
+**📖 Documentation**: [docs/finance/README.md](docs/finance/README.md)
+
+**Build & Deploy**:
+```bash
+make build-finance    # Build the module
+make deploy-finance   # Deploy the module
 ```
-POST   /api/contacts/:contactId/addresses           - Create address
-GET    /api/contacts/:contactId/addresses           - List addresses
-GET    /api/contacts/:contactId/addresses/:id       - Get address
-PATCH  /api/contacts/:contactId/addresses/:id       - Update address
-DELETE /api/contacts/:contactId/addresses/:id       - Delete address
-```
+
+**API**: http://localhost:3003 (configurable)
+
+### Banking Module
+
+Core banking platform for account management, transactions, and lending (in planning).
+
+**📖 Documentation**: [docs/banking/README.md](docs/banking/README.md)  
+**Status**: 📋 Planning Phase
 
 ## 📁 Project Structure
 
 ```
 evero/
+├── Makefile                      # Root orchestration for all modules
+├── bin/                          # Compiled binaries (gitignored)
+│   ├── access
+│   ├── healthcare
+│   ├── insurance
+│   └── finance
+│
 ├── app/                          # Application entry points
 │   ├── healthcare/               # Healthcare application
 │   ├── insurance/                # Insurance application
-│   ├── banking/                  # Banking application
-│   └── access/                   # Access/SSO application
+│   └── finance/                  # Finance application
+│
+├── modules/                      # Domain modules
+│   ├── access/                   # Authentication & Authorization module
+│   │   ├── cmd/server/           # Entry point
+│   │   ├── entities/             # Domain entities
+│   │   ├── models/               # Request/Response models
+│   │   ├── repositories/         # Data access layer
+│   │   ├── usecases/             # Business logic
+│   │   ├── controllers/          # HTTP handlers
+│   │   └── route.go              # Route definitions
+│   └── healthcare/               # Healthcare domain module
+│       ├── delivery/             # HTTP handlers/controllers
+│       ├── entity/               # Domain entities
+│       ├── features/             # Business logic (use cases)
+│       ├── gateway/              # External integrations
+│       ├── model/                # Request/Response models
+│       ├── repository/           # Data access layer
+│       └── test/                 # Unit and integration tests
 │
 ├── infrastructure/               # Shared infrastructure components
 │   ├── cache/                    # Cache management (Redis, In-memory)
@@ -129,40 +228,31 @@ evero/
 │   ├── setup/                    # Infrastructure bootstrapping
 │   └── validator/                # Request validation
 │
-├── modules/                      # Domain modules
-│   ├── healthcare/
-│   │   ├── app/                  # Application setup
-│   │   ├── delivery/             # HTTP handlers/controllers
-│   │   ├── entity/               # Domain entities
-│   │   ├── features/             # Business logic (use cases)
-│   │   ├── gateway/              # External integrations (Kafka, etc.)
-│   │   ├── model/                # Request/Response models
-│   │   ├── repository/           # Data access layer
-│   │   └── test/                 # Unit and integration tests
-│   ├── access/                   # Authentication & Authorization
-│   │   ├── app/                  # Application setup
-│   │   ├── delivery/             # HTTP controllers
-│   │   ├── entity/               # User, Session, OAuth entities
-│   │   ├── features/             # Auth use cases
-│   │   ├── middleware/           # Auth middleware
-│   │   ├── model/                # Request/Response DTOs
-│   │   └── repository/           # Data access layer
-│   └── user/                     # User management module
-│
 ├── config/                       # Configuration files
-│   ├── healthcare/
-│   ├── insurance/
-│   ├── banking/
-│   └── access/                   # Access module configs
+│   ├── access/                   # Access module configs
+│   │   ├── local.json
+│   │   ├── development.json
+│   │   ├── stage.json
+│   │   └── production.json
+│   ├── healthcare/               # Healthcare configs
+│   ├── insurance/                # Insurance configs
+│   └── finance/                  # Finance configs
 │
 ├── database/                     # Database migrations and seeds
-│   ├── healthcare/
-│   ├── insurance/
-│   ├── banking/
-│   └── access/                   # SSO database schemas
+│   ├── access/migrations/        # SSO database schemas
+│   ├── healthcare/migrations/    # Healthcare schemas
+│   ├── insurance/migrations/     # Insurance schemas
+│   └── finance/migrations/       # Finance schemas (10 tables)
 │
 ├── deployment/                   # Deployment configurations
-│   └── access/                   # Docker files for access module
+│   ├── access/                   # Access module deployment
+│   │   ├── Makefile              # Deployment tasks
+│   │   ├── setup.sh              # Setup script
+│   │   ├── Dockerfile
+│   │   └── docker-compose.yml
+│   ├── healthcare/               # Healthcare deployment
+│   ├── insurance/                # Insurance deployment
+│   └── finance/                  # Finance deployment
 │
 ├── packages/                     # External service integrations
 │   ├── lib/                      # Shared libraries
@@ -170,8 +260,12 @@ evero/
 │   └── twilio/                   # SMS service
 │
 └── docs/                         # Documentation
-    ├── ACCESS_README.md          # Access module documentation
-    └── access/                   # Detailed access module docs
+    ├── evero/                    # Platform technical docs
+    ├── access/                   # Access module documentation
+    ├── healthcare/               # Healthcare module documentation
+    ├── insurance/                # Insurance module documentation
+    ├── finance/                  # Finance module documentation
+    └── banking/                  # Banking module documentation
 ```
 
 ## 🛠️ Technology Stack
@@ -199,11 +293,12 @@ evero/
 ### Prerequisites
 
 - **Go**: 1.24.4 or higher
-- **PostgreSQL**: 12 or higher
+- **PostgreSQL**: 14 or higher
 - **Redis**: 6 or higher (optional, for caching)
 - **Kafka**: 2.8 or higher (optional, for event streaming)
+- **Make**: For using the Makefile commands
 
-### Installation
+### Quick Start
 
 1. **Clone the repository**
    ```bash
@@ -211,34 +306,79 @@ evero/
    cd evero
    ```
 
-2. **Install dependencies**
+2. **View available commands**
    ```bash
-   go mod download
+   make help
    ```
 
-3. **Set up the database**
-   
-   For Healthcare module:
+3. **Setup a module** (e.g., healthcare)
    ```bash
-   cd database/healthcare
-   go run migrate.go
+   make setup-healthcare
    ```
 
-4. **Configure the application**
-   
-   Update the configuration file for your environment:
-   ```
-   config/healthcare/local.json
+4. **Build a module**
+   ```bash
+   make build-healthcare
    ```
 
-5. **Run the application**
-   
-   For Healthcare module:
+5. **Run migrations**
    ```bash
-   go run app/healthcare/main.go
+   make migrate-healthcare
    ```
-   
-   The server will start on `http://localhost:3000` (default)
+
+6. **Deploy a module**
+   ```bash
+   make deploy-healthcare
+   ```
+
+### Module-Specific Setup
+
+Each module can be set up and deployed independently:
+
+**Access Module (SSO)**:
+```bash
+make setup-access      # Setup access module
+make build-access      # Build binary
+make deploy-access     # Deploy with migrations
+```
+
+**Healthcare Module**:
+```bash
+make setup-healthcare
+make build-healthcare
+make deploy-healthcare
+```
+
+**Finance Module**:
+```bash
+make setup-finance
+make build-finance
+make deploy-finance
+```
+
+**All Modules**:
+```bash
+make setup-all         # Setup all modules
+make build-all         # Build all modules
+make deploy-all        # Deploy all modules
+```
+
+### Check Module Status
+
+```bash
+make status
+```
+
+Output:
+```
+📊 Module Status
+================================
+Access:      ✅ Built
+Healthcare:  ✅ Built
+Insurance:   ❌ Not built
+Finance:     ✅ Built
+================================
+```
 
 ## 📝 Configuration
 
@@ -246,30 +386,38 @@ Evero uses environment-specific JSON configuration files. Each module has its ow
 
 ```
 config/
-├── healthcare/
+├── access/
 │   ├── local.json          # Local development
 │   ├── development.json    # Development environment
 │   ├── stage.json          # Staging environment
 │   └── production.json     # Production environment
+├── healthcare/
+├── insurance/
+└── finance/
 ```
 
-### Sample Configuration Structure
+### Configuration Structure
+
+Each module follows a consistent configuration structure:
 
 ```json
 {
   "app": {
-    "name": "Evero Healthcare API"
+    "name": "Evero Healthcare API",
+    "version": "1.0.0"
   },
   "web": {
     "port": 3000,
-    "prefork": false
+    "prefork": false,
+    "cors_enabled": true
   },
   "database": {
     "host": "localhost",
     "port": 5432,
     "username": "postgres",
     "password": "postgres",
-    "name": "healthcare_db",
+    "name": "evero_db",
+    "sslmode": "disable",
     "pool": {
       "idle": 10,
       "max": 100,
@@ -279,12 +427,31 @@ config/
   "kafka": {
     "bootstrap.servers": "localhost:9092",
     "producer.enabled": false,
-    "group.id": "healthcare-service"
+    "group.id": "evero-service"
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "",
+    "db": 0
   },
   "log": {
-    "level": "info"
+    "level": "info",
+    "format": "json"
   }
 }
+```
+
+### Environment Selection
+
+Set the environment using:
+```bash
+export EVERO_ENV=production  # Options: local, development, stage, production
+```
+
+Or specify when running:
+```bash
+./bin/access --config=config/access/production.json
 ```
 
 ## 🧪 Testing
@@ -295,44 +462,35 @@ config/
 # Run all tests
 go test ./...
 
-# Run tests for a specific module
-go test ./modules/healthcare/...
+# Test specific module
+make test-access
+make test-healthcare
+make test-finance
 
-# Run tests with coverage
+# All module tests
+make test-all
+
+# Run with coverage
 go test -cover ./...
 ```
 
-### Postman Testing
+### Module Status
 
-The Healthcare module includes a comprehensive Postman collection with 50+ tests:
-
-1. **Import the collection**
-   ```
-   modules/healthcare/Evero_Healthcare_API.postman_collection.json
-   ```
-
-2. **Start the server**
-   ```bash
-   go run app/healthcare/main.go
-   ```
-
-3. **Run the tests**
-   - Start with "Seeded Data Tests" folder
-   - Test user credentials are pre-seeded in the database
-   - All environment variables are auto-populated
-
-For detailed testing instructions, see [POSTMAN_TESTING_GUIDE.md](POSTMAN_TESTING_GUIDE.md)
+Check which modules are built:
+```bash
+make status
+```
 
 ## 🏛️ Infrastructure Components
 
 ### Configuration Manager
 Centralized configuration loading with support for:
-- Environment-specific files
+- Environment-specific files  
 - Module-specific overrides
 - Type-safe access methods
 - Hot-reload capability
 
-See [infrastructure/config/README.md](infrastructure/config/README.md)
+See [infrastructure/config/example_usage.md](infrastructure/config/example_usage.md)
 
 ### Cache Manager
 Multi-backend caching support:
@@ -340,25 +498,33 @@ Multi-backend caching support:
 - In-memory cache
 - Factory pattern for easy switching
 
-See [infrastructure/cache/README.md](infrastructure/cache/README.md)
+### Database Manager
+Database connection management:
+- PostgreSQL support with GORM
+- Connection pooling
+- Migration support
+- Multi-database support
 
 ### Message Broker
-Event-driven messaging with:
+Event-driven messaging:
 - Kafka producer/consumer
 - RabbitMQ support
 - Async event publishing
 
-See [infrastructure/message-broker/README.md](infrastructure/message-broker/README.md)
+### Router
+HTTP routing with multiple framework support:
+- Fiber v2 (primary)
+- Gin
+- Gorilla Mux
 
-### Setup Package
-Reusable infrastructure bootstrapping:
-- Database initialization
-- Logger setup
-- Validator configuration
-- Web framework setup
-- Message broker connections
+### Logger
+Structured logging:
+- Logrus
+- Zap
+- Configurable log levels
+- JSON formatting
 
-See [infrastructure/setup/README.md](infrastructure/setup/README.md)
+See [infrastructure/](infrastructure/) for detailed documentation.
 
 ## 🔒 Security
 
@@ -372,13 +538,68 @@ See [infrastructure/setup/README.md](infrastructure/setup/README.md)
 
 ### Docker Support
 
-Each module can be deployed independently using Docker. Configuration files are environment-specific.
+Each module can be deployed independently using Docker:
 
-### Environment Variables
-
-Set the following environment variable to specify the environment:
 ```bash
-export EVERO_ENV=production  # Options: local, development, stage, production
+# Build Docker image
+make docker-build-access
+
+# Start containers
+make docker-up-access
+
+# Stop containers
+make docker-down-access
+```
+
+### Deployment Files
+
+Each module has its own deployment configuration:
+
+```
+deployment/
+├── access/
+│   ├── Makefile              # Deployment commands
+│   ├── setup.sh              # Setup script
+│   ├── Dockerfile            # Docker image
+│   └── docker-compose.yml    # Orchestration
+├── healthcare/
+├── insurance/
+└── finance/
+```
+
+### Environment Configuration
+
+Set the environment variable:
+```bash
+export EVERO_ENV=production
+```
+
+Configuration files are loaded based on this variable:
+- `local` → config/[module]/local.json
+- `development` → config/[module]/development.json
+- `stage` → config/[module]/stage.json
+- `production` → config/[module]/production.json
+
+### Production Deployment
+
+1. Build the module:
+   ```bash
+   make build-access
+   ```
+
+2. Run migrations:
+   ```bash
+   make migrate-access
+   ```
+
+3. Start the service:
+   ```bash
+   ./bin/access --config=config/access/production.json
+   ```
+
+Or use the combined deploy command:
+```bash
+make deploy-access  # Builds + migrates
 ```
 
 ## 📚 API Documentation
@@ -411,7 +632,7 @@ All API responses follow a consistent format:
 List endpoints support pagination:
 
 ```
-GET /api/contacts?page=1&size=10
+GET /api/v1/[resource]?page=1&size=10
 ```
 
 Response includes metadata:
@@ -427,6 +648,20 @@ Response includes metadata:
 }
 ```
 
+### Module-Specific APIs
+
+- **Access Module**: Authentication, authorization, OAuth 2.0, 2FA
+  - See [docs/access/QUICK_REFERENCE.md](docs/access/QUICK_REFERENCE.md)
+  
+- **Healthcare Module**: Patient management, appointments, EMR
+  - See [docs/healthcare/README.md](docs/healthcare/README.md)
+  
+- **Insurance Module**: Policies, claims, underwriting
+  - See [docs/insurance/README.md](docs/insurance/README.md)
+  
+- **Finance Module**: General ledger, invoicing, budgeting
+  - See [docs/finance/README.md](docs/finance/README.md)
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -441,6 +676,38 @@ Response includes metadata:
 - Write meaningful commit messages
 - Add tests for new features
 - Update documentation as needed
+- Use the Makefile for common tasks
+
+### Development Workflow
+
+1. Create a new module or feature
+2. Write tests first (TDD approach)
+3. Implement the feature
+4. Run tests: `make test-[module]`
+5. Format code: `make fmt`
+6. Run linter: `make lint`
+7. Update documentation
+8. Submit PR
+
+## 📖 Documentation
+
+### Module Documentation
+- [Access Module](docs/access/IMPLEMENTATION_SUMMARY.md) - Authentication & authorization
+- [Healthcare Module](docs/healthcare/README.md) - Healthcare management
+- [Insurance Module](docs/insurance/README.md) - Insurance operations
+- [Finance Module](docs/finance/README.md) - Financial management
+- [Banking Module](docs/banking/README.md) - Banking services (planned)
+
+### Platform Documentation
+- [Platform Architecture](docs/evero/ARCHITECTURE.md) - Platform architecture and design principles
+- [Deployment Guide](docs/evero/DEPLOYMENT.md) - Comprehensive deployment instructions
+- [Infrastructure Guide](docs/evero/INFRASTRUCTURE.md) - Shared infrastructure components
+- [Postman Testing Guide](docs/evero/POSTMAN_TESTING_GUIDE.md) - API testing with Postman
+- [SSO Migration Summary](docs/SSO_MIGRATION_SUMMARY.md) - Access module migration details
+
+### Quick References
+- [Access Quick Reference](docs/access/QUICK_REFERENCE.md)
+- [Makefile Commands](#-getting-started) - Use `make help`
 
 ## 📄 License
 

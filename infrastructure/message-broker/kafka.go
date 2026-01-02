@@ -6,10 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/IBM/sarama"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type kafkaBroker struct {
@@ -654,4 +657,62 @@ func (k *kafkaBroker) GetStats(ctx context.Context) (*BrokerStats, error) {
 // Close closes the Kafka broker
 func (k *kafkaBroker) Close() error {
 	return k.Disconnect(context.Background())
+}
+
+// NewKafkaConsumerGroup creates a new Kafka consumer group based on configuration
+// This provides backwards compatibility with the existing Sarama usage
+func NewKafkaConsumerGroup(config *viper.Viper, log *logrus.Logger) sarama.ConsumerGroup {
+	saramaConfig := sarama.NewConfig()
+	saramaConfig.Consumer.Return.Errors = true
+
+	offsetReset := config.GetString("kafka.auto.offset.reset")
+	if offsetReset == "earliest" {
+		saramaConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
+	} else {
+		saramaConfig.Consumer.Offsets.Initial = sarama.OffsetNewest
+	}
+
+	brokers := strings.Split(config.GetString("kafka.bootstrap.servers"), ",")
+	groupID := config.GetString("kafka.group.id")
+
+	consumerGroup, err := sarama.NewConsumerGroup(brokers, groupID, saramaConfig)
+	if err != nil {
+		log.Fatalf("Failed to create consumer group: %v", err)
+	}
+	return consumerGroup
+}
+
+// NewKafkaProducer creates a new Kafka producer based on configuration
+// This provides backwards compatibility with the existing Sarama usage
+func NewKafkaProducer(config *viper.Viper, log *logrus.Logger) sarama.SyncProducer {
+	if !config.GetBool("kafka.producer.enabled") {
+		log.Info("Kafka producer is disabled")
+		return nil
+	}
+
+	saramaConfig := sarama.NewConfig()
+	saramaConfig.Producer.Return.Successes = true
+	saramaConfig.Producer.RequiredAcks = sarama.WaitForAll
+	saramaConfig.Producer.Retry.Max = 3
+
+	brokers := strings.Split(config.GetString("kafka.bootstrap.servers"), ",")
+
+	producer, err := sarama.NewSyncProducer(brokers, saramaConfig)
+	if err != nil {
+		log.Fatalf("Failed to create producer: %v", err)
+	}
+	return producer
+}
+
+// NewStructuredKafkaBroker creates a new Kafka broker using the infrastructure message-broker
+// This uses the advanced ConfigBuilder pattern for more flexible configuration
+func NewStructuredKafkaBroker(config *viper.Viper) (MessageBroker, error) {
+	brokers := strings.Split(config.GetString("kafka.bootstrap.servers"), ",")
+	groupID := config.GetString("kafka.group.id")
+
+	brokerConfig := NewConfigBuilder().
+		ForKafka(brokers, groupID, "").
+		Build()
+
+	return NewKafkaBroker(brokerConfig)
 }

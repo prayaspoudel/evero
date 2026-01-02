@@ -7,6 +7,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	go_playground "github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
+	"github.com/spf13/viper"
 )
 
 type goPlayground struct {
@@ -56,4 +57,15 @@ func (g *goPlayground) Messages() []string {
 	}
 
 	return g.msg
+}
+
+// NewValidator creates a new validator instance
+// Returns the go-playground validator for backwards compatibility
+func NewValidator(viper *viper.Viper) *go_playground.Validate {
+	return go_playground.New()
+}
+
+// NewStructuredValidator creates a new structured validator using the infrastructure validator
+func NewStructuredValidator() (Validator, error) {
+	return NewValidatorFactory(InstanceGoPlayground)
 }

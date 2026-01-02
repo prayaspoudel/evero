@@ -4,12 +4,12 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/prayaspoudel/modules/access/middleware"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http"
 	"github.com/prayaspoudel/modules/healthcare/delivery/http/route"
+	"github.com/prayaspoudel/modules/healthcare/delivery/messaging"
 	"github.com/prayaspoudel/modules/healthcare/features/address"
 	"github.com/prayaspoudel/modules/healthcare/features/user"
-	"github.com/prayaspoudel/modules/healthcare/gateway/messaging"
+	healthcareMiddleware "github.com/prayaspoudel/modules/healthcare/middleware"
 	"github.com/prayaspoudel/modules/healthcare/repository"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -53,7 +53,7 @@ func Bootstrap(config *BootstrapConfig) {
 	addressController := http.NewAddressController(addressUseCase, config.Log)
 
 	// setup middleware
-	authMiddleware := middleware.NewAuth(userUseCase)
+	authMiddleware := healthcareMiddleware.NewAuth(userUseCase)
 
 	routeConfig := route.RouteConfig{
 		App:               config.App,

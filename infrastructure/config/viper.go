@@ -135,3 +135,31 @@ func (v *viperConfigManager) GetEnvironment() string {
 func (v *viperConfigManager) GetModule() string {
 	return v.module
 }
+
+// NewViper creates a new Viper configuration loader with simplified setup
+// This provides backwards compatibility with the existing simple Viper usage
+// configPath: path to config directory (e.g., "config/healthcare")
+// configName: name of config file without extension (e.g., "local", "development", "production")
+func NewViper(configPath, configName string) *viper.Viper {
+	config := viper.New()
+
+	config.SetConfigName(configName)
+	config.SetConfigType("json")
+	config.AddConfigPath(configPath)
+	config.AddConfigPath("./../../" + configPath)
+	config.AddConfigPath("./../" + configPath)
+	config.AddConfigPath("./" + configPath)
+
+	err := config.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("fatal error config file: %w", err))
+	}
+
+	return config
+}
+
+// NewStructuredConfig creates a new structured configuration manager
+// This is an alias for NewViperConfigManager for consistency with other infrastructure modules
+func NewStructuredConfig() (ConfigManager, error) {
+	return NewConfigManagerFactory(InstanceViper)
+}

@@ -7,15 +7,17 @@ import (
 	"syscall"
 	"time"
 
-	infraSetup "github.com/prayaspoudel/infrastructure/setup"
+	"github.com/prayaspoudel/infrastructure/config"
+	"github.com/prayaspoudel/infrastructure/logger"
+	messagebroker "github.com/prayaspoudel/infrastructure/message-broker"
 	"github.com/prayaspoudel/modules/healthcare/delivery/messaging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 func main() {
-	viperConfig := infraSetup.NewViper("config/healthcare", "local")
-	logger := infraSetup.NewLogger(viperConfig)
+	viperConfig := config.NewViper("config/healthcare", "local")
+	logger := logger.NewLogger(viperConfig)
 	logger.Info("Starting worker service")
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -42,21 +44,21 @@ func main() {
 
 func RunAddressConsumer(logger *logrus.Logger, viperConfig *viper.Viper, ctx context.Context) {
 	logger.Info("setup address consumer")
-	addressConsumerGroup := infraSetup.NewKafkaConsumerGroup(viperConfig, logger)
+	addressConsumerGroup := messagebroker.NewKafkaConsumerGroup(viperConfig, logger)
 	addressHandler := messaging.NewAddressConsumer(logger)
 	messaging.ConsumeTopic(ctx, addressConsumerGroup, "addresses", logger, addressHandler.Consume)
 }
 
 func RunContactConsumer(logger *logrus.Logger, viperConfig *viper.Viper, ctx context.Context) {
 	logger.Info("setup contact consumer")
-	contactConsumerGroup := infraSetup.NewKafkaConsumerGroup(viperConfig, logger)
+	contactConsumerGroup := messagebroker.NewKafkaConsumerGroup(viperConfig, logger)
 	contactHandler := messaging.NewContactConsumer(logger)
 	messaging.ConsumeTopic(ctx, contactConsumerGroup, "contacts", logger, contactHandler.Consume)
 }
 
 func RunUserConsumer(logger *logrus.Logger, viperConfig *viper.Viper, ctx context.Context) {
 	logger.Info("setup user consumer")
-	userConsumerGroup := infraSetup.NewKafkaConsumerGroup(viperConfig, logger)
+	userConsumerGroup := messagebroker.NewKafkaConsumerGroup(viperConfig, logger)
 	userHandler := messaging.NewUserConsumer(logger)
 	messaging.ConsumeTopic(ctx, userConsumerGroup, "users", logger, userHandler.Consume)
 }

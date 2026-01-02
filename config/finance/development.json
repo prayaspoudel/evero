@@ -1,0 +1,40 @@
+{
+  "app": {
+    "name": "evero-finance"
+  },
+  "web": {
+    "prefork": false,
+    "port": 3003
+  },
+  "log": {
+    "level": 5
+  },
+  "database": {
+    "username": "evero_user",
+    "password": "${DB_PASSWORD}",
+    "host": "localhost",
+    "port": 5432,
+    "name": "evero_finance_dev",
+    "pool": {
+      "idle": 10,
+      "max": 100,
+      "lifetime": 300
+    }
+  },
+  "kafka": {
+    "bootstrap": {
+      "servers": "localhost:9092"
+    },
+    "group": {
+      "id": "evero-finance-dev"
+    },
+    "auto": {
+      "offset": {
+        "reset": "earliest"
+      }
+    },
+    "producer": {
+      "enabled": false
+    }
+  }
+}

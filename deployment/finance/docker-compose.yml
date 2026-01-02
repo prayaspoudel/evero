@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: finance-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: finance_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - finance_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  finance:
+    build:
+      context: ../..
+      dockerfile: deployment/finance/Dockerfile
+    container_name: finance-server
+    ports:
+      - "3003:3003"
+    environment:
+      HEALTHCARE_DB_HOST: postgres
+      HEALTHCARE_DB_PORT: 5432
+      HEALTHCARE_DB_USER: postgres
+      HEALTHCARE_DB_PASSWORD: postgres
+      HEALTHCARE_DB_NAME: finance_db
+      HEALTHCARE_DB_SSLMODE: disable
+      HEALTHCARE_PORT: 3003
+      HEALTHCARE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  finance_postgres_data:

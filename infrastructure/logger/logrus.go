@@ -2,6 +2,7 @@ package logger
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type logrusLogger struct {
@@ -84,4 +85,18 @@ func convertToLogrusFields(fields Fields) logrus.Fields {
 	}
 
 	return logrusFields
+}
+
+// NewLogger creates a new Logrus logger instance based on configuration
+// This creates a configured logrus.Logger for backwards compatibility
+func NewLogger(viper *viper.Viper) *logrus.Logger {
+	log := logrus.New()
+	log.SetLevel(logrus.Level(viper.GetInt32("log.level")))
+	log.SetFormatter(&logrus.JSONFormatter{})
+	return log
+}
+
+// NewStructuredLogger creates a new structured logger using the infrastructure logger
+func NewStructuredLogger() (Logger, error) {
+	return NewLoggerFactory(InstanceLogrusLogger)
 }

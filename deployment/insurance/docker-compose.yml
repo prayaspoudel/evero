@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: insurance-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: insurance_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - insurance_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  insurance:
+    build:
+      context: ../..
+      dockerfile: deployment/insurance/Dockerfile
+    container_name: insurance-server
+    ports:
+      - "3002:3002"
+    environment:
+      HEALTHCARE_DB_HOST: postgres
+      HEALTHCARE_DB_PORT: 5432
+      HEALTHCARE_DB_USER: postgres
+      HEALTHCARE_DB_PASSWORD: postgres
+      HEALTHCARE_DB_NAME: insurance_db
+      HEALTHCARE_DB_SSLMODE: disable
+      HEALTHCARE_PORT: 3002
+      HEALTHCARE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  insurance_postgres_data:

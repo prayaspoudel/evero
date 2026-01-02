@@ -2,8 +2,8 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/prayaspoudel/modules/access/middleware"
 	"github.com/prayaspoudel/modules/healthcare/features/user"
+	"github.com/prayaspoudel/modules/healthcare/middleware"
 	"github.com/prayaspoudel/modules/healthcare/model"
 	"github.com/sirupsen/logrus"
 )

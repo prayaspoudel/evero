@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: healthcare-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: healthcare_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - healthcare_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  healthcare:
+    build:
+      context: ../..
+      dockerfile: deployment/healthcare/Dockerfile
+    container_name: healthcare-server
+    ports:
+      - "3001:3001"
+    environment:
+      HEALTHCARE_DB_HOST: postgres
+      HEALTHCARE_DB_PORT: 5432
+      HEALTHCARE_DB_USER: postgres
+      HEALTHCARE_DB_PASSWORD: postgres
+      HEALTHCARE_DB_NAME: healthcare_db
+      HEALTHCARE_DB_SSLMODE: disable
+      HEALTHCARE_PORT: 3001
+      HEALTHCARE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  healthcare_postgres_data:

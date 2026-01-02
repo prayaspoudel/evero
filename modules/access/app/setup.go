@@ -3,17 +3,22 @@ package access
 import (
 	"fmt"
 
-	infraSetup "github.com/prayaspoudel/infrastructure/setup"
+	"github.com/prayaspoudel/infrastructure/config"
+	"github.com/prayaspoudel/infrastructure/database"
+	"github.com/prayaspoudel/infrastructure/logger"
+	messagebroker "github.com/prayaspoudel/infrastructure/message-broker"
+	"github.com/prayaspoudel/infrastructure/router"
+	"github.com/prayaspoudel/infrastructure/validator"
 )
 
 func Setup() {
-	// Initialize infrastructure components using centralized setup
-	viperConfig := infraSetup.NewViper("config/access", "local")
-	log := infraSetup.NewLogger(viperConfig)
-	db := infraSetup.NewDatabase(viperConfig, log)
-	validate := infraSetup.NewValidator(viperConfig)
-	app := infraSetup.NewFiber(viperConfig)
-	producer := infraSetup.NewKafkaProducer(viperConfig, log)
+	// Initialize infrastructure components using specific infrastructure packages
+	viperConfig := config.NewViper("config/access", "local")
+	log := logger.NewLogger(viperConfig)
+	db := database.NewDatabase(viperConfig, log)
+	validate := validator.NewValidator(viperConfig)
+	app := router.NewFiber(viperConfig)
+	producer := messagebroker.NewKafkaProducer(viperConfig, log)
 
 	// Bootstrap access module
 	Bootstrap(&BootstrapConfig{
