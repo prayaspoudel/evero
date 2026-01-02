@@ -1,376 +1,304 @@
 package auth
-package auth
 
 import (
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	return nil, errors.New("invalid token")	}		return claims, nil	if claims, ok := token.Claims.(*Claims); ok && token.Valid {	}		return nil, err	if err != nil {	})		return []byte(accessSecret), nil	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {	}		return nil, errors.New("jwt access secret not configured")	if accessSecret == "" {	accessSecret := uc.Config.GetString("jwt.access_secret")func (uc *AuthUseCase) VerifyAccessToken(tokenString string) (*Claims, error) {}	return base64.URLEncoding.EncodeToString(b), nil	}		return "", err	if _, err := rand.Read(b); err != nil {	b := make([]byte, 32)func (uc *AuthUseCase) generateRefreshToken() (string, error) {}	return token.SignedString([]byte(accessSecret))	}		return "", errors.New("jwt access secret not configured")	if accessSecret == "" {	accessSecret := uc.Config.GetString("jwt.access_secret")	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)	}		},			Issuer:    uc.Config.GetString("jwt.issuer"),			IssuedAt:  jwt.NewNumericDate(time.Now()),			ExpiresAt: jwt.NewNumericDate(time.Now().Add(accessExpiry)),		RegisteredClaims: jwt.RegisteredClaims{		Email:  user.Email,		UserID: user.ID,	claims := &Claims{	}		accessExpiry = 15 * time.Minute	if accessExpiry == 0 {	accessExpiry := uc.Config.GetDuration("jwt.access_expiry")func (uc *AuthUseCase) generateAccessToken(user *entity.User) (string, error) {}	}, nil		Companies:    companyResponses,		User:         converter.UserToResponse(user),		TokenType:    "Bearer",		ExpiresIn:    int(accessExpiry.Seconds()),		RefreshToken: newRefreshToken,		AccessToken:  accessToken,	return &model.LoginResponse{	}		accessExpiry = 15 * time.Minute	if accessExpiry == 0 {	accessExpiry := uc.Config.GetDuration("jwt.access_expiry")	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to commit transaction")	if err := tx.Commit().Error; err != nil {	}		companyResponses[i] = *converter.CompanyToResponse(&company)	for i, company := range companies {	companyResponses := make([]model.CompanyResponse, len(companies))	companies, _ := uc.CompanyRepository.FindByUserID(tx, user.ID)	// Get companies	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to create refresh token")	if err := uc.TokenRepository.Create(tx, newRT); err != nil {	}		ExpiresAt: time.Now().Add(refreshExpiry),		Token:     newRefreshToken,		UserID:    user.ID,		ID:        uuid.New().String(),	newRT := &entity.RefreshToken{	}		refreshExpiry = 7 * 24 * time.Hour	if refreshExpiry == 0 {	refreshExpiry := uc.Config.GetDuration("jwt.refresh_expiry")	// Store new refresh token	}		uc.Log.WithError(err).Error("failed to revoke old token")	if err := uc.TokenRepository.RevokeByToken(tx, request.RefreshToken); err != nil {	// Revoke old refresh token	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to generate refresh token")	if err != nil {	newRefreshToken, err := uc.generateRefreshToken()	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to generate access token")	if err != nil {	accessToken, err := uc.generateAccessToken(user)	// Generate new tokens	}		return nil, fiber.ErrNotFound		uc.Log.WithError(err).Error("user not found")	if err := uc.UserRepository.FindByID(tx, user, rt.UserID); err != nil {	user := new(entity.User)	// Get user	}		return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid refresh token")		uc.Log.WithError(err).Error("invalid refresh token")	if err := uc.TokenRepository.FindByToken(tx, rt, request.RefreshToken); err != nil {	rt := new(entity.RefreshToken)	// Verify refresh token	}		return nil, fiber.ErrBadRequest		uc.Log.WithError(err).Error("validation failed")	if err := uc.Validate.Struct(request); err != nil {	defer tx.Rollback()	tx := uc.DB.WithContext(ctx).Begin()func (uc *AuthUseCase) RefreshToken(ctx context.Context, request *model.RefreshTokenRequest) (*model.LoginResponse, error) {}	return nil	}		return fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to commit transaction")	if err := tx.Commit().Error; err != nil {	}		return fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to delete sessions")	if err := uc.SessionRepository.DeleteByUserID(tx, request.UserID); err != nil {	// Delete all sessions	}		return fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to revoke tokens")	if err := uc.TokenRepository.RevokeByUserID(tx, request.UserID); err != nil {	// Revoke all refresh tokens	}		return fiber.ErrBadRequest		uc.Log.WithError(err).Error("validation failed")	if err := uc.Validate.Struct(request); err != nil {	defer tx.Rollback()	tx := uc.DB.WithContext(ctx).Begin()func (uc *AuthUseCase) Logout(ctx context.Context, request *model.LogoutRequest) error {}	}, nil		Companies:    companyResponses,		User:         converter.UserToResponse(user),		TokenType:    "Bearer",		ExpiresIn:    int(accessExpiry.Seconds()),		RefreshToken: refreshToken,		AccessToken:  accessToken,	return &model.LoginResponse{	}		accessExpiry = 15 * time.Minute // Default 15 minutes	if accessExpiry == 0 {	accessExpiry := uc.Config.GetDuration("jwt.access_expiry")	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to commit transaction")	if err := tx.Commit().Error; err != nil {	}		companyResponses[i] = *converter.CompanyToResponse(&company)	for i, company := range companies {	companyResponses := make([]model.CompanyResponse, len(companies))	companies, _ := uc.CompanyRepository.FindByUserID(tx, user.ID)	// Get user companies	}		uc.Log.WithError(err).Warn("failed to update last login")	if err := uc.UserRepository.UpdateLastLogin(tx, user.ID, ipAddress); err != nil {	// Update last login	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to create session")	if err := uc.SessionRepository.Create(tx, session); err != nil {	}		ExpiresAt:    time.Now().Add(refreshExpiry),		UserAgent:    userAgent,		IPAddress:    ipAddress,		SessionToken: refreshToken,		UserID:       user.ID,		ID:           uuid.New().String(),	session := &entity.Session{	// Create session	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to create refresh token")	if err := uc.TokenRepository.Create(tx, rt); err != nil {	}		ExpiresAt: time.Now().Add(refreshExpiry),		ClientID:  request.ClientID,		Token:     refreshToken,		UserID:    user.ID,		ID:        uuid.New().String(),	rt := &entity.RefreshToken{	}		refreshExpiry = 7 * 24 * time.Hour // Default 7 days	if refreshExpiry == 0 {	refreshExpiry := uc.Config.GetDuration("jwt.refresh_expiry")	// Store refresh token	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to generate refresh token")	if err != nil {	refreshToken, err := uc.generateRefreshToken()	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to generate access token")	if err != nil {	accessToken, err := uc.generateAccessToken(user)	// Generate tokens	}		return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid credentials")		uc.Log.WithError(err).Error("invalid password")	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(request.Password)); err != nil {	// Verify password	}		return nil, fiber.NewError(fiber.StatusForbidden, "account is inactive")	if !user.IsActive {	}		return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid credentials")		uc.Log.WithError(err).Error("user not found")	if err := uc.UserRepository.FindByEmail(tx, user, request.Email); err != nil {	user := new(entity.User)	// Get user	}		return nil, fiber.ErrBadRequest		uc.Log.WithError(err).Error("validation failed")	if err := uc.Validate.Struct(request); err != nil {	defer tx.Rollback()	tx := uc.DB.WithContext(ctx).Begin()func (uc *AuthUseCase) Login(ctx context.Context, request *model.LoginUserRequest, ipAddress, userAgent string) (*model.LoginResponse, error) {}	return converter.UserToResponse(user), nil	// TODO: Send verification email	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to commit transaction")	if err := tx.Commit().Error; err != nil {	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to create user")	if err := uc.UserRepository.Create(tx, user); err != nil {	}		IsVerified:   false,		IsActive:     true,		LastName:     request.LastName,		FirstName:    request.FirstName,		PasswordHash: string(hashedPassword),		Email:        request.Email,		ID:           uuid.New().String(),	user := &entity.User{	}		return nil, fiber.ErrInternalServerError		uc.Log.WithError(err).Error("failed to hash password")	if err != nil {	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)	// Hash password	}		return nil, fiber.NewError(fiber.StatusConflict, "user already exists")		uc.Log.Warn("user already exists")	if err := uc.UserRepository.FindByEmail(tx, existingUser, request.Email); err == nil {	existingUser := new(entity.User)	// Check if user exists	}		return nil, fiber.ErrBadRequest		uc.Log.WithError(err).Error("validation failed")	if err := uc.Validate.Struct(request); err != nil {	defer tx.Rollback()	tx := uc.DB.WithContext(ctx).Begin()func (uc *AuthUseCase) Register(ctx context.Context, request *model.RegisterUserRequest) (*model.UserResponse, error) {}	}		CompanyRepository:   companyRepo,		TokenRepository:     tokenRepo,		SessionRepository:   sessionRepo,		UserRepository:      userRepo,		Config:              config,		Validate:            validate,		Log:                 logger,		DB:                  db,	return &AuthUseCase{	tokenRepo *repository.RefreshTokenRepository, companyRepo *repository.CompanyRepository) *AuthUseCase {	config *viper.Viper, userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository,func NewAuthUseCase(db *gorm.DB, logger *logrus.Logger, validate *validator.Validate,}	CompanyRepository   *repository.CompanyRepository	TokenRepository     *repository.RefreshTokenRepository	SessionRepository   *repository.SessionRepository	UserRepository      *repository.UserRepository	Config              *viper.Viper	Validate            *validator.Validate	Log                 *logrus.Logger	DB                  *gorm.DBtype AuthUseCase struct {}	jwt.RegisteredClaims	Companies []string `json:"companies"`	Email     string   `json:"email"`	UserID    string   `json:"user_id"`type Claims struct {)	"gorm.io/gorm"	"golang.org/x/crypto/bcrypt"	"github.com/spf13/viper"	"github.com/sirupsen/logrus"	"github.com/prayaspoudel/modules/access/repository"	"github.com/prayaspoudel/modules/access/model/converter"	"github.com/prayaspoudel/modules/access/model"	"github.com/prayaspoudel/modules/access/entity"	"github.com/google/uuid"	"github.com/golang-jwt/jwt/v5"	"github.com/gofiber/fiber/v2"	"github.com/go-playground/validator/v10"	"time"	"errors"	"encoding/base64"	"crypto/rand"	"context"
+	"errors"
+	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
+	"github.com/prayaspoudel/modules/access/entity"
+	"github.com/prayaspoudel/modules/access/model"
+	"github.com/prayaspoudel/modules/access/model/converter"
+	"github.com/prayaspoudel/modules/access/repository"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
+
+type AuthUseCase struct {
+	DB                *gorm.DB
+	Log               *logrus.Logger
+	Viper             *viper.Viper
+	UserRepository    *repository.UserRepository
+	SessionRepository *repository.SessionRepository
+	RefreshTokenRepo  *repository.RefreshTokenRepository
+	CompanyRepository *repository.CompanyRepository
+}
+
+func NewAuthUseCase(
+	db *gorm.DB,
+	log *logrus.Logger,
+	viper *viper.Viper,
+	userRepo *repository.UserRepository,
+	sessionRepo *repository.SessionRepository,
+	refreshTokenRepo *repository.RefreshTokenRepository,
+	companyRepo *repository.CompanyRepository,
+) *AuthUseCase {
+	return &AuthUseCase{
+		DB:                db,
+		Log:               log,
+		Viper:             viper,
+		UserRepository:    userRepo,
+		SessionRepository: sessionRepo,
+		RefreshTokenRepo:  refreshTokenRepo,
+		CompanyRepository: companyRepo,
+	}
+}
+
+func (uc *AuthUseCase) Register(req *model.RegisterUserRequest) (*model.UserResponse, error) {
+	// Check if user exists
+	var existingUser entity.User
+	err := uc.UserRepository.FindByEmail(uc.DB, &existingUser, req.Email)
+	if err == nil {
+		return nil, fiber.NewError(fiber.StatusConflict, "email already exists")
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		uc.Log.WithError(err).Error("error checking existing user")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		uc.Log.WithError(err).Error("error hashing password")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Create user
+	user := &entity.User{
+		ID:            uuid.New().String(),
+		Email:         req.Email,
+		PasswordHash:  string(hashedPassword),
+		FirstName:     req.FirstName,
+		LastName:      req.LastName,
+		IsActive:      true,
+		IsVerified:    false,
+		EmailVerified: false,
+	}
+
+	if err := uc.UserRepository.Create(uc.DB, user); err != nil {
+		uc.Log.WithError(err).Error("error creating user")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	return converter.UserToResponse(user), nil
+}
+
+func (uc *AuthUseCase) Login(req *model.LoginUserRequest, ipAddress string) (*model.LoginResponse, error) {
+	// Find user
+	var user entity.User
+	err := uc.UserRepository.FindByEmail(uc.DB, &user, req.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid credentials")
+		}
+		uc.Log.WithError(err).Error("error finding user")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Verify password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid credentials")
+	}
+
+	// Check if user is active
+	if !user.IsActive {
+		return nil, fiber.NewError(fiber.StatusForbidden, "account is inactive")
+	}
+
+	// Generate access token
+	accessToken, expiresIn, err := uc.generateAccessToken(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate refresh token
+	refreshTokenStr := uuid.New().String()
+	refreshToken := &entity.RefreshToken{
+		ID:        uuid.New().String(),
+		UserID:    user.ID,
+		Token:     refreshTokenStr,
+		ExpiresAt: time.Now().Add(time.Hour * 24 * 30), // 30 days
+	}
+
+	if err := uc.RefreshTokenRepo.Create(uc.DB, refreshToken); err != nil {
+		uc.Log.WithError(err).Error("error creating refresh token")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Create session
+	session := &entity.Session{
+		ID:           uuid.New().String(),
+		UserID:       user.ID,
+		SessionToken: accessToken,
+		IPAddress:    ipAddress,
+		UserAgent:    "", // TODO: Get from request
+		ExpiresAt:    time.Now().Add(time.Duration(expiresIn) * time.Second),
+	}
+
+	if err := uc.SessionRepository.Create(uc.DB, session); err != nil {
+		uc.Log.WithError(err).Error("error creating session")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Update last login
+	if err := uc.UserRepository.UpdateLastLogin(uc.DB, user.ID, ipAddress); err != nil {
+		uc.Log.WithError(err).Error("error updating last login")
+	}
+
+	// Get user companies
+	var companies []entity.Company
+	if err := uc.CompanyRepository.FindByUserID(uc.DB, &companies, user.ID); err != nil {
+		uc.Log.WithError(err).Error("error fetching companies")
+		// Don't fail the login, just return empty companies
+	}
+
+	companyResponses := make([]model.CompanyResponse, len(companies))
+	for i, company := range companies {
+		companyResponses[i] = *converter.CompanyToResponse(&company)
+	}
+
+	return &model.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshTokenStr,
+		ExpiresIn:    expiresIn,
+		TokenType:    "Bearer",
+		User:         converter.UserToResponse(&user),
+		Companies:    companyResponses,
+	}, nil
+}
+
+func (uc *AuthUseCase) Logout(userID string, token string) error {
+	// Delete session
+	if err := uc.SessionRepository.DeleteByToken(uc.DB, token); err != nil {
+		uc.Log.WithError(err).Error("error deleting session")
+	}
+
+	// Revoke all refresh tokens for user
+	if err := uc.RefreshTokenRepo.RevokeByUserID(uc.DB, userID); err != nil {
+		uc.Log.WithError(err).Error("error revoking refresh tokens")
+		return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	return nil
+}
+
+func (uc *AuthUseCase) RefreshToken(req *model.RefreshTokenRequest) (*model.LoginResponse, error) {
+	// Find refresh token
+	var refreshToken entity.RefreshToken
+	err := uc.RefreshTokenRepo.FindByToken(uc.DB, &refreshToken, req.RefreshToken)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid refresh token")
+		}
+		uc.Log.WithError(err).Error("error finding refresh token")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Check if token is expired
+	if time.Now().After(refreshToken.ExpiresAt) {
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "refresh token expired")
+	}
+
+	// Get user
+	var user entity.User
+	if err := uc.UserRepository.FindByID(uc.DB, &user, refreshToken.UserID); err != nil {
+		uc.Log.WithError(err).Error("error finding user")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Generate new access token
+	accessToken, expiresIn, err := uc.generateAccessToken(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Rotate refresh token
+	newRefreshTokenStr := uuid.New().String()
+	newRefreshToken := &entity.RefreshToken{
+		ID:        uuid.New().String(),
+		UserID:    user.ID,
+		Token:     newRefreshTokenStr,
+		ExpiresAt: time.Now().Add(time.Hour * 24 * 30),
+	}
+
+	if err := uc.RefreshTokenRepo.Create(uc.DB, newRefreshToken); err != nil {
+		uc.Log.WithError(err).Error("error creating refresh token")
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	// Revoke old refresh token
+	if err := uc.RefreshTokenRepo.RevokeByToken(uc.DB, req.RefreshToken); err != nil {
+		uc.Log.WithError(err).Error("error revoking old refresh token")
+	}
+
+	// Get user companies
+	var companies []entity.Company
+	if err := uc.CompanyRepository.FindByUserID(uc.DB, &companies, user.ID); err != nil {
+		uc.Log.WithError(err).Error("error fetching companies")
+	}
+
+	companyResponses := make([]model.CompanyResponse, len(companies))
+	for i, company := range companies {
+		companyResponses[i] = *converter.CompanyToResponse(&company)
+	}
+
+	return &model.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: newRefreshTokenStr,
+		ExpiresIn:    expiresIn,
+		TokenType:    "Bearer",
+		User:         converter.UserToResponse(&user),
+		Companies:    companyResponses,
+	}, nil
+}
+
+func (uc *AuthUseCase) generateAccessToken(user *entity.User) (string, int, error) {
+	expiresIn := uc.Viper.GetInt("jwt.expiration")
+	if expiresIn == 0 {
+		expiresIn = 3600 // Default 1 hour
+	}
+
+	claims := jwt.MapClaims{
+		"sub":   user.ID,
+		"email": user.Email,
+		"exp":   time.Now().Add(time.Duration(expiresIn) * time.Second).Unix(),
+		"iat":   time.Now().Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secret := uc.Viper.GetString("jwt.secret")
+	if secret == "" {
+		uc.Log.Error("JWT secret not configured")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		uc.Log.WithError(err).Error("error signing token")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
+
+	return tokenString, expiresIn, nil
+}
+
+func (uc *AuthUseCase) VerifyAccessToken(tokenString string) (*jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fiber.NewError(fiber.StatusUnauthorized, "unexpected signing method")
+		}
+		return []byte(uc.Viper.GetString("jwt.secret")), nil
+	})
+
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid token")
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return &claims, nil
+	}
+
+	return nil, fiber.NewError(fiber.StatusUnauthorized, "invalid token")
+}

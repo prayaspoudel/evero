@@ -46,6 +46,40 @@ The healthcare module provides comprehensive patient and contact management capa
   - Address validation
   - Hierarchical data structure (User → Contact → Address)
 
+### Access Module (SSO)
+
+The access module provides comprehensive authentication and authorization services:
+
+#### Features
+- **Authentication**
+  - User registration and login
+  - JWT-based access and refresh tokens
+  - Automatic token rotation
+  - Session management
+
+- **Authorization**
+  - Multi-company/tenant support
+  - OAuth2 authorization flows
+  - Two-factor authentication (TOTP, SMS)
+  - Role-based access control
+
+- **Security**
+  - Password reset and verification
+  - Email verification
+  - Audit logging
+  - Account lockout protection
+
+**📖 Documentation**: See [docs/ACCESS_README.md](docs/ACCESS_README.md)
+
+**Quick Start**:
+```bash
+# Build and run the access module
+go build -o bin/access app/access/main.go
+./bin/access
+```
+
+**API**: http://localhost:8080 (configurable)
+
 #### API Endpoints
 
 **User Management**
@@ -82,7 +116,8 @@ evero/
 ├── app/                          # Application entry points
 │   ├── healthcare/               # Healthcare application
 │   ├── insurance/                # Insurance application
-│   └── banking/                  # Banking application
+│   ├── banking/                  # Banking application
+│   └── access/                   # Access/SSO application
 │
 ├── infrastructure/               # Shared infrastructure components
 │   ├── cache/                    # Cache management (Redis, In-memory)
@@ -104,25 +139,39 @@ evero/
 │   │   ├── model/                # Request/Response models
 │   │   ├── repository/           # Data access layer
 │   │   └── test/                 # Unit and integration tests
-│   └── user/                     # User authentication module
+│   ├── access/                   # Authentication & Authorization
+│   │   ├── app/                  # Application setup
+│   │   ├── delivery/             # HTTP controllers
+│   │   ├── entity/               # User, Session, OAuth entities
+│   │   ├── features/             # Auth use cases
+│   │   ├── middleware/           # Auth middleware
+│   │   ├── model/                # Request/Response DTOs
+│   │   └── repository/           # Data access layer
+│   └── user/                     # User management module
 │
 ├── config/                       # Configuration files
 │   ├── healthcare/
 │   ├── insurance/
-│   └── banking/
+│   ├── banking/
+│   └── access/                   # Access module configs
 │
 ├── database/                     # Database migrations and seeds
 │   ├── healthcare/
 │   ├── insurance/
-│   └── banking/
+│   ├── banking/
+│   └── access/                   # SSO database schemas
+│
+├── deployment/                   # Deployment configurations
+│   └── access/                   # Docker files for access module
 │
 ├── packages/                     # External service integrations
 │   ├── lib/                      # Shared libraries
 │   ├── sendgrid/                 # Email service
 │   └── twilio/                   # SMS service
 │
-├── docs/                         # Documentation
-└── deployment/                   # Deployment configurations
+└── docs/                         # Documentation
+    ├── ACCESS_README.md          # Access module documentation
+    └── access/                   # Detailed access module docs
 ```
 
 ## 🛠️ Technology Stack

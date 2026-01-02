@@ -1,89 +1,87 @@
 package model
-package model
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	UserID string `json:"-" validate:"required"`type LogoutRequest struct {// LogoutRequest represents a logout request}	Email     string `json:"email" validate:"email,max=255"`	LastName  string `json:"lastName" validate:"max=100"`	FirstName string `json:"firstName" validate:"max=100"`	UserID    string `json:"-" validate:"required"`type UpdateUserRequest struct {// UpdateUserRequest represents an update user request}	UserID string `json:"-" validate:"required"`type GetUserRequest struct {// GetUserRequest represents a get user request}	Token string `json:"token" validate:"required"`type VerifyEmailRequest struct {// VerifyEmailRequest represents an email verification request}	NewPassword string `json:"newPassword" validate:"required,min=8"`	Token       string `json:"token" validate:"required"`type ResetPasswordRequest struct {// ResetPasswordRequest represents a password reset request}	Email string `json:"email" validate:"required,email"`type ForgotPasswordRequest struct {// ForgotPasswordRequest represents a forgot password request}	NewPassword string `json:"newPassword" validate:"required,min=8"`	OldPassword string `json:"oldPassword" validate:"required"`	UserID      string `json:"-" validate:"required"`type ChangePasswordRequest struct {// ChangePasswordRequest represents a password change request}	RefreshToken string `json:"refreshToken" validate:"required"`type RefreshTokenRequest struct {// RefreshTokenRequest represents a token refresh request}	Companies    []CompanyResponse `json:"companies,omitempty"`	User         *UserResponse  `json:"user"`	TokenType    string         `json:"tokenType"`	ExpiresIn    int            `json:"expiresIn"`	RefreshToken string         `json:"refreshToken"`	AccessToken  string         `json:"accessToken"`type LoginResponse struct {// LoginResponse represents the authentication response}	ClientID string `json:"clientId,omitempty"`	Password string `json:"password" validate:"required"`	Email    string `json:"email" validate:"required,email"`type LoginUserRequest struct {// LoginUserRequest represents a login request}	LastName  string `json:"lastName" validate:"required,max=100"`	FirstName string `json:"firstName" validate:"required,max=100"`	Password  string `json:"password" validate:"required,min=8,max=100"`	Email     string `json:"email" validate:"required,email,max=255"`type RegisterUserRequest struct {// RegisterUserRequest represents a registration request}	UpdatedAt     int64  `json:"updatedAt"`	CreatedAt     int64  `json:"createdAt"`	EmailVerified bool   `json:"emailVerified"`	IsVerified    bool   `json:"isVerified"`	IsActive      bool   `json:"isActive"`	Role          string `json:"role"`	CompanyID     string `json:"companyId,omitempty"`	LastName      string `json:"lastName"`	FirstName     string `json:"firstName"`	Email         string `json:"email"`	ID            string `json:"id"`type UserResponse struct {// UserResponse represents user data in API responses
+// UserResponse represents user data in API responses
+type UserResponse struct {
+	ID            string `json:"id"`
+	Email         string `json:"email"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	CompanyID     string `json:"companyId,omitempty"`
+	Role          string `json:"role"`
+	IsActive      bool   `json:"isActive"`
+	IsVerified    bool   `json:"isVerified"`
+	EmailVerified bool   `json:"emailVerified"`
+	CreatedAt     int64  `json:"createdAt"`
+	UpdatedAt     int64  `json:"updatedAt"`
+}
+
+// RegisterUserRequest represents a registration request
+type RegisterUserRequest struct {
+	Email     string `json:"email" validate:"required,email,max=255"`
+	Password  string `json:"password" validate:"required,min=8,max=100"`
+	FirstName string `json:"firstName" validate:"required,max=100"`
+	LastName  string `json:"lastName" validate:"required,max=100"`
+}
+
+// LoginUserRequest represents a login request
+type LoginUserRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+	ClientID string `json:"clientId,omitempty"`
+}
+
+// LoginResponse represents the authentication response
+type LoginResponse struct {
+	AccessToken  string            `json:"accessToken"`
+	RefreshToken string            `json:"refreshToken"`
+	ExpiresIn    int               `json:"expiresIn"`
+	TokenType    string            `json:"tokenType"`
+	User         *UserResponse     `json:"user"`
+	Companies    []CompanyResponse `json:"companies,omitempty"`
+}
+
+// RefreshTokenRequest represents a token refresh request
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refreshToken" validate:"required"`
+}
+
+// ChangePasswordRequest represents a password change request
+type ChangePasswordRequest struct {
+	UserID      string `json:"-" validate:"required"`
+	OldPassword string `json:"oldPassword" validate:"required"`
+	NewPassword string `json:"newPassword" validate:"required,min=8"`
+}
+
+// ForgotPasswordRequest represents a forgot password request
+type ForgotPasswordRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+// ResetPasswordRequest represents a password reset request
+type ResetPasswordRequest struct {
+	Token       string `json:"token" validate:"required"`
+	NewPassword string `json:"newPassword" validate:"required,min=8"`
+}
+
+// VerifyEmailRequest represents an email verification request
+type VerifyEmailRequest struct {
+	Token string `json:"token" validate:"required"`
+}
+
+// GetUserRequest represents a get user request
+type GetUserRequest struct {
+	UserID string `json:"-" validate:"required"`
+}
+
+// UpdateUserRequest represents an update user request
+type UpdateUserRequest struct {
+	UserID    string `json:"-" validate:"required"`
+	FirstName string `json:"firstName" validate:"max=100"`
+	LastName  string `json:"lastName" validate:"max=100"`
+	Email     string `json:"email" validate:"email,max=255"`
+}
+
+// LogoutRequest represents a logout request
+type LogoutRequest struct {
+	UserID string `json:"-" validate:"required"`
+}

@@ -1,47 +1,36 @@
 package model
-package model
 
-// TwoFactorSetupResponse contains QR code and backup codes for 2FA setup
+// TwoFactorSetupRequest represents a request to set up two-factor authentication
+type TwoFactorSetupRequest struct {
+	Method      string  `json:"method" validate:"required,oneof=totp sms"`
+	PhoneNumber *string `json:"phoneNumber,omitempty" validate:"omitempty,e164"`
+}
+
+// TwoFactorSetupResponse represents the response for 2FA setup
 type TwoFactorSetupResponse struct {
+	Secret      string   `json:"secret,omitempty"`
+	QRCode      string   `json:"qrCode,omitempty"`
+	BackupCodes []string `json:"backupCodes"`
+}
 
+// TwoFactorVerifyRequest represents a request to verify a 2FA code
+type TwoFactorVerifyRequest struct {
+	Code string `json:"code" validate:"required,len=6"`
+}
 
+// TwoFactorDisableRequest represents a request to disable 2FA
+type TwoFactorDisableRequest struct {
+	Password string `json:"password" validate:"required"`
+}
 
+// RegenerateBackupCodesRequest represents a request to regenerate backup codes
+type RegenerateBackupCodesRequest struct {
+	Password string `json:"password" validate:"required"`
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	Code   string `json:"code" validate:"required"`	UserID string `json:"-" validate:"required"`type UseBackupCodeRequest struct {// UseBackupCodeRequest represents a request to use a backup code}	UserID string `json:"-" validate:"required"`type RegenerateBackupCodesRequest struct {// RegenerateBackupCodesRequest represents a request to regenerate backup codes}	PhoneNumber *string `json:"phoneNumber,omitempty"`	Method      string  `json:"method" validate:"required,oneof=totp sms"`	UserID      string  `json:"-" validate:"required"`type Setup2FARequest struct {// Setup2FARequest represents a request to setup 2FA}	Password string `json:"password" validate:"required"`	UserID   string `json:"-" validate:"required"`type Disable2FARequest struct {// Disable2FARequest represents a request to disable 2FA}	Code   string `json:"code" validate:"required"`	UserID string `json:"-" validate:"required"`type Verify2FARequest struct {// Verify2FARequest represents a 2FA verification request}	Code   string `json:"code" validate:"required"`	Method string `json:"method" validate:"required,oneof=totp sms"`	UserID string `json:"-" validate:"required"`type Enable2FARequest struct {// Enable2FARequest represents a request to enable 2FA}	BackupCodes []string `json:"backupCodes"`	QRCodeURL   string   `json:"qrCodeUrl"`	Secret      string   `json:"secret"`
+// TwoFactorStatusResponse represents the status of 2FA for a user
+type TwoFactorStatusResponse struct {
+	Enabled          bool   `json:"enabled"`
+	Method           string `json:"method,omitempty"`
+	BackupCodesCount int    `json:"backupCodesCount"`
+}

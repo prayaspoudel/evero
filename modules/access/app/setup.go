@@ -29,7 +29,7 @@ func Setup() {
 	if webPort == 0 {
 		webPort = 8080 // Default port for SSO service
 	}
-	
+
 	err := app.Listen(fmt.Sprintf(":%d", webPort))
 	if err != nil {
 		log.Fatalf("Failed to start server: %v", err)

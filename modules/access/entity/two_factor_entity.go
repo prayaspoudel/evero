@@ -1,5 +1,4 @@
 package entity
-package entity
 
 import "time"
 
@@ -34,20 +33,19 @@ type UserTwoFactor struct {
 	UpdatedAt        int64           `gorm:"column:updated_at;autoCreateTime:milli;autoUpdateTime:milli"`
 }
 
+func (utf *UserTwoFactor) TableName() string {
+	return "sso_user_two_factors"
+}
 
+// BackupCode represents a 2FA backup code
+type BackupCode struct {
+	ID        string     `gorm:"column:id;primaryKey"`
+	UserID    string     `gorm:"column:user_id;not null"`
+	Code      string     `gorm:"column:code;not null"` // Hashed
+	UsedAt    *time.Time `gorm:"column:used_at"`
+	CreatedAt int64      `gorm:"column:created_at;autoCreateTime:milli"`
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	return "sso_backup_codes"func (bc *BackupCode) TableName() string {}	CreatedAt int64      `gorm:"column:created_at;autoCreateTime:milli"`	UsedAt    *time.Time `gorm:"column:used_at"`	Code      string     `gorm:"column:code;not null"` // Hashed	UserID    string     `gorm:"column:user_id;not null"`	ID        string     `gorm:"column:id;primaryKey"`type BackupCode struct {// BackupCode represents a 2FA backup code}	return "sso_user_two_factors"func (utf *UserTwoFactor) TableName() string {
+func (bc *BackupCode) TableName() string {
+	return "sso_backup_codes"
+}

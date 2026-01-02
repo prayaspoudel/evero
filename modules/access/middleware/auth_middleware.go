@@ -45,8 +45,8 @@ func (m *AuthMiddleware) Authenticate(ctx *fiber.Ctx) error {
 
 	// Set user context
 	ctx.Locals("auth", &AuthContext{
-		UserID: claims.UserID,
-		Email:  claims.Email,
+		UserID: (*claims)["sub"].(string),
+		Email:  (*claims)["email"].(string),
 	})
 
 	return ctx.Next()

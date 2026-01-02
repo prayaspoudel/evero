@@ -1,4 +1,3 @@
-package access
 package main
 
 import (
@@ -7,5 +6,4 @@ import (
 
 func main() {
 	app.Setup()
-
 }

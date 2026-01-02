@@ -1,113 +1,116 @@
 package http
-package http
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	Data   T      `json:"data,omitempty"`	Status string `json:"status"`	Code   int    `json:"code"`type WebResponse[T any] struct {// WebResponse represents a standard API response}	})		Data:   response,		Status: "success",		Code:   fiber.StatusOK,	return ctx.JSON(WebResponse[*model.LoginResponse]{	}		return err		c.Log.WithError(err).Warn("failed to refresh token")	if err != nil {	response, err := c.UseCase.RefreshToken(ctx.UserContext(), request)	}		return fiber.ErrBadRequest		c.Log.WithError(err).Warn("failed to parse request body")	if err := ctx.BodyParser(request); err != nil {	request := new(model.RefreshTokenRequest)func (c *AuthController) RefreshToken(ctx *fiber.Ctx) error {}	})		Data:   "logged out successfully",		Status: "success",		Code:   fiber.StatusOK,	return ctx.JSON(WebResponse[string]{	}		return err		c.Log.WithError(err).Warn("failed to logout")	if err != nil {	err := c.UseCase.Logout(ctx.UserContext(), request)	}		UserID: auth.UserID,	request := &model.LogoutRequest{	auth := middleware.GetAuth(ctx)func (c *AuthController) Logout(ctx *fiber.Ctx) error {}	})		Data:   response,		Status: "success",		Code:   fiber.StatusOK,	return ctx.JSON(WebResponse[*model.LoginResponse]{	}		return err		c.Log.WithError(err).Warn("failed to login")	if err != nil {	response, err := c.UseCase.Login(ctx.UserContext(), request, ipAddress, userAgent)	userAgent := string(ctx.Request().Header.UserAgent())	ipAddress := ctx.IP()	}		return fiber.ErrBadRequest		c.Log.WithError(err).Warn("failed to parse request body")	if err := ctx.BodyParser(request); err != nil {	request := new(model.LoginUserRequest)func (c *AuthController) Login(ctx *fiber.Ctx) error {}	})		Data:   response,		Status: "success",		Code:   fiber.StatusCreated,	return ctx.Status(fiber.StatusCreated).JSON(WebResponse[*model.UserResponse]{	}		return err		c.Log.WithError(err).Warn("failed to register user")	if err != nil {	response, err := c.UseCase.Register(ctx.UserContext(), request)	}		return fiber.ErrBadRequest		c.Log.WithError(err).Warn("failed to parse request body")	if err := ctx.BodyParser(request); err != nil {	request := new(model.RegisterUserRequest)func (c *AuthController) Register(ctx *fiber.Ctx) error {}	}		UseCase: useCase,		Log:     logger,	return &AuthController{func NewAuthController(useCase *auth.AuthUseCase, logger *logrus.Logger) *AuthController {}	UseCase *auth.AuthUseCase	Log     *logrus.Loggertype AuthController struct {)	"github.com/sirupsen/logrus"	"github.com/prayaspoudel/modules/access/middleware"	"github.com/prayaspoudel/modules/access/model"	"github.com/prayaspoudel/modules/access/features/auth"	"github.com/gofiber/fiber/v2"import (
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
+	"github.com/prayaspoudel/modules/access/features/auth"
+	"github.com/prayaspoudel/modules/access/middleware"
+	"github.com/prayaspoudel/modules/access/model"
+	"github.com/sirupsen/logrus"
+)
+
+type AuthController struct {
+	Log         *logrus.Logger
+	AuthUseCase *auth.AuthUseCase
+	Validator   *validator.Validate
+}
+
+func NewAuthController(log *logrus.Logger, authUseCase *auth.AuthUseCase, validator *validator.Validate) *AuthController {
+	return &AuthController{
+		Log:         log,
+		AuthUseCase: authUseCase,
+		Validator:   validator,
+	}
+}
+
+// WebResponse generic response wrapper
+type WebResponse[T any] struct {
+	Data   T      `json:"data,omitempty"`
+	Error  string `json:"error,omitempty"`
+	Status string `json:"status"`
+}
+
+func (c *AuthController) Register(ctx *fiber.Ctx) error {
+	var req model.RegisterUserRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
+	}
+
+	if err := c.Validator.Struct(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	user, err := c.AuthUseCase.Register(&req)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(WebResponse[*model.UserResponse]{
+		Status: "success",
+		Data:   user,
+	})
+}
+
+func (c *AuthController) Login(ctx *fiber.Ctx) error {
+	var req model.LoginUserRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
+	}
+
+	if err := c.Validator.Struct(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	ipAddress := ctx.IP()
+	response, err := c.AuthUseCase.Login(&req, ipAddress)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(WebResponse[*model.LoginResponse]{
+		Status: "success",
+		Data:   response,
+	})
+}
+
+func (c *AuthController) Logout(ctx *fiber.Ctx) error {
+	authCtx := middleware.GetAuth(ctx)
+	if authCtx == nil {
+		return fiber.NewError(fiber.StatusUnauthorized, "unauthorized")
+	}
+
+	token := ctx.Get("Authorization")
+	if len(token) > 7 && token[:7] == "Bearer " {
+		token = token[7:]
+	}
+
+	if err := c.AuthUseCase.Logout(authCtx.UserID, token); err != nil {
+		return err
+	}
+
+	return ctx.JSON(WebResponse[any]{
+		Status: "success",
+		Data:   fiber.Map{"message": "logged out successfully"},
+	})
+}
+
+func (c *AuthController) RefreshToken(ctx *fiber.Ctx) error {
+	var req model.RefreshTokenRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
+	}
+
+	if err := c.Validator.Struct(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	response, err := c.AuthUseCase.RefreshToken(&req)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(WebResponse[*model.LoginResponse]{
+		Status: "success",
+		Data:   response,
+	})
+}

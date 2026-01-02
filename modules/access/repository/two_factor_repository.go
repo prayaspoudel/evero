@@ -1,5 +1,4 @@
 package repository
-package repository
 
 import (
 	"github.com/prayaspoudel/modules/access/entity"
@@ -22,40 +21,21 @@ func (r *TwoFactorRepository) FindByUserID(db *gorm.DB, twoFactor *entity.UserTw
 	return db.Where("user_id = ?", userID).First(twoFactor).Error
 }
 
+type BackupCodeRepository struct {
+	Repository[entity.BackupCode]
+	Log *logrus.Logger
+}
 
+func NewBackupCodeRepository(log *logrus.Logger) *BackupCodeRepository {
+	return &BackupCodeRepository{
+		Log: log,
+	}
+}
 
+func (r *BackupCodeRepository) FindByUserIDAndCode(db *gorm.DB, code *entity.BackupCode, userID, codeStr string) error {
+	return db.Where("user_id = ? AND code = ? AND used_at IS NULL", userID, codeStr).First(code).Error
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	return db.Where("user_id = ?", userID).Delete(&entity.BackupCode{}).Errorfunc (r *BackupCodeRepository) DeleteByUserID(db *gorm.DB, userID string) error {}		Update("used_at", gorm.Expr("NOW()")).Error		Where("id = ?", id).	return db.Model(&entity.BackupCode{}).func (r *BackupCodeRepository) MarkAsUsed(db *gorm.DB, id string) error {}	return codes, err	err := db.Where("user_id = ? AND used_at IS NULL", userID).Find(&codes).Error	var codes []entity.BackupCodefunc (r *BackupCodeRepository) FindByUserID(db *gorm.DB, userID string) ([]entity.BackupCode, error) {}	}		Log: log,	return &BackupCodeRepository{func NewBackupCodeRepository(log *logrus.Logger) *BackupCodeRepository {}	Log *logrus.Logger	Repository[entity.BackupCode]type BackupCodeRepository struct {}	return db.Where("user_id = ?", userID).Delete(&entity.UserTwoFactor{}).Errorfunc (r *TwoFactorRepository) DeleteByUserID(db *gorm.DB, userID string) error {}		Update("status", status).Error		Where("user_id = ?", userID).	return db.Model(&entity.UserTwoFactor{}).func (r *TwoFactorRepository) UpdateStatus(db *gorm.DB, userID string, status entity.TwoFactorStatus) error {
+func (r *BackupCodeRepository) DeleteByUserID(db *gorm.DB, userID string) error {
+	return db.Where("user_id = ?", userID).Delete(&entity.BackupCode{}).Error
+}
