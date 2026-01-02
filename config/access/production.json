@@ -1,0 +1,53 @@
+{
+  "app": {
+    "name": "Evero SSO Access Service"
+  },
+  "web": {
+    "port": 8080,
+    "prefork": true
+  },
+  "database": {
+    "host": "production-db-host",
+    "port": 5432,
+    "username": "postgres",
+    "password": "change-me-in-production",
+    "name": "evero_sso_prod_db",
+    "pool": {
+      "idle": 20,
+      "max": 200,
+      "lifetime": 600
+    }
+  },
+  "jwt": {
+    "access_secret": "CHANGE-THIS-IN-PRODUCTION",
+    "refresh_secret": "CHANGE-THIS-IN-PRODUCTION",
+    "access_expiry": "15m",
+    "refresh_expiry": "168h",
+    "issuer": "evero-sso-service"
+  },
+  "kafka": {
+    "bootstrap.servers": "kafka-prod:9092",
+    "producer.enabled": true,
+    "group.id": "access-service"
+  },
+  "log": {
+    "level": "warn"
+  },
+  "oauth": {
+    "auth_code_expiry": "10m"
+  },
+  "email": {
+    "smtp_host": "smtp.sendgrid.net",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "smtp_from": "noreply@evero.com"
+  },
+  "server": {
+    "allowed_origins": [
+      "https://app.evero.com",
+      "https://dashboard.evero.com"
+    ],
+    "environment": "production"
+  }
+}

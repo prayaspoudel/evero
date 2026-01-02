@@ -1,0 +1,59 @@
+{
+  "app": {
+    "name": "Evero SSO Access Service"
+  },
+  "web": {
+    "port": 8080,
+    "prefork": false
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "name": "evero_sso_db",
+    "pool": {
+      "idle": 10,
+      "max": 100,
+      "lifetime": 300
+    }
+  },
+  "jwt": {
+    "access_secret": "your-access-secret-key-change-in-production",
+    "refresh_secret": "your-refresh-secret-key-change-in-production",
+    "access_expiry": "15m",
+    "refresh_expiry": "168h",
+    "issuer": "evero-sso-service"
+  },
+  "kafka": {
+    "bootstrap.servers": "localhost:9092",
+    "producer.enabled": false,
+    "group.id": "access-service"
+  },
+  "log": {
+    "level": "info"
+  },
+  "oauth": {
+    "auth_code_expiry": "10m"
+  },
+  "email": {
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "smtp_from": "noreply@evero.com"
+  },
+  "twilio": {
+    "account_sid": "",
+    "auth_token": "",
+    "phone_number": ""
+  },
+  "server": {
+    "allowed_origins": [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:3002"
+    ],
+    "environment": "local"
+  }
+}

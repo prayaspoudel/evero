@@ -1,0 +1,37 @@
+package route
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}	})		})			"service": "sso-access",			"status": "ok",		return ctx.JSON(fiber.Map{	c.App.Get("/health", func(ctx *fiber.Ctx) error {	// Health check	auth.Post("/logout", c.AuthMiddleware.Authenticate, c.AuthController.Logout)	// Protected routes	auth.Post("/refresh", c.AuthController.RefreshToken)	auth.Post("/login", c.AuthController.Login)	auth.Post("/register", c.AuthController.Register)	auth := api.Group("/auth")	// Auth routes (public)	api := c.App.Group("/api")	// API groupfunc (c *RouteConfig) Setup() {}	AuthMiddleware *middleware.AuthMiddleware	AuthController *http.AuthController	App            *fiber.Apptype RouteConfig struct {)	"github.com/prayaspoudel/modules/access/middleware"	"github.com/prayaspoudel/modules/access/delivery/http"	"github.com/gofiber/fiber/v2"import (package route
